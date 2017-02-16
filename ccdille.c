@@ -1,11 +1,6 @@
 #include "ccdille.h"
 
-struct french_keyword keywords[] = {
-  {"entier", "int"},
-  {"principale", "main"},
-  {"caractère", "char"},
-  {"retourner", "return"}
-};
+
 
 int main(int argc, char* argv[]) {
   size_t i = 0;
