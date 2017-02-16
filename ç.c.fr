@@ -1,0 +1,131 @@
+#inclure "ccdille.h"
+
+entier principale(entier argc, caractère* argv[]) {
+	taille_t i = 0;
+
+	FICHIER *file, *temp;
+	caractère* file_path = NUL;
+
+	caractère buffer[BUF_SIZE];
+	entier c;
+	entier parse_success;
+	taille_t len;
+	caractère* temp_file_name;
+	taille_t written;
+
+	entier compilation_success;
+
+	si (argc == 1) {
+		retourner 0;
+	}
+
+	temp_file_name = calloc(10, taille de(caractère));
+
+	pour (i = 1; i < (taille_t)argc; ++i) {
+		file_path = argv[i];
+
+		/* open the file to parse */
+		file = fopen(file_path, "r");
+		if (file == NUL) {
+			fprintf(stderr, "File %s could not be opened\n", file_path);
+			retourner 1;
+		}
+
+		/* set the name of the file to create */
+		asprintf(&temp_file_name, "%lu%s", i, ".c");
+
+		/* create the file to write in */
+		temp = fopen(temp_file_name, "w");
+		if (temp == NUL) {
+			fprintf(stderr, "Failed to create a new file.\n");
+			retourner 8;
+		}
+
+		/* read words from the file */
+		len = 0;
+		pour (;;) {
+			c = fgetc(file);
+
+			si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
+				parse_success = ccdille_parse_word((caractère*)buffer, &len);
+				if (parse_success || c == EOF) {
+					written = fwrite((vide*)buffer, taille de(caractère), len, temp);
+					si (written < len) {
+						retourner 6;
+					}
+
+					if (c == EOF) {
+						casser;
+					}
+
+					buffer[0] = (caractère) c;
+					written = fwrite((void*)buffer, taille de(caractère), 1, temp);
+
+					if (written < 1) {
+						retourner 7;
+					}
+
+					len = 0;
+					continuer;
+				}
+			}
+
+			buffer[len] = (caractère) c;
+			++len;
+		}
+
+		/* close the file */
+		fclose(file);
+	}
+
+	fclose(temp);
+
+	compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", temp_file_name, NUL);
+
+	free(temp_file_name);
+
+	retourner compilation_success;
+}
+
+entier ccdille_parse_word(caractère* word, taille_t* len) {
+  taille_t i;
+  énumération ccdille_strcmp_result result;
+  structure french_keyword keyword;
+  for (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
+    keyword = keywords[i];
+    result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
+    commuter (result) {
+    cas CCDILLE_MATCH:
+      *len = strlen(keyword.translation);
+      memcpy(word, keyword.translation, *len);
+      retourner 1;
+    cas CCDILLE_PREFIX:
+      retourner 0;
+    cas CCDILLE_NO_MATCH:
+      casser;
+    /* mdr ya pas de par défaut */
+    }
+  }
+
+  retourner 1;
+}
+
+taille_t ccdille_min(taille_t a, taille_t b) {
+  retourner a <= b ? a : b;
+}
+
+énumération ccdille_strcmp_result ccdille_strcmp(caractère constant* a, taille_t len_a, caractère constant* b, taille_t len_b) {
+  taille_t i;
+  pour (i = 0; i < ccdille_min(len_a, len_b); i++) {
+    si (a[i] != b[i]) {
+      retourner CCDILLE_NO_MATCH;
+    }
+  }
+  si (len_a == len_b) {
+    retourner CCDILLE_MATCH;
+  }
+  si (len_a > len_b || b[i] != ' ') {
+    retourner CCDILLE_NO_MATCH;
+  }
+  retourner CCDILLE_PREFIX;
+}

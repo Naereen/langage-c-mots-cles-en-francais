@@ -74,6 +74,7 @@ struct french_keyword keywords[] = {
 
   {"taille_t", "size_t"},
   {"FICHIER", "FILE"},
+  {"NUL", "NULL"},
 
   {"<assertion.en-tête>", "<assert.h>"},
   {"<complexe.en-tête>", "<complex.h>"},
