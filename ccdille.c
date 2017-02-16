@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  temp_file_name = calloc(10 * sizeof(char));
+  temp_file_name = calloc(10, sizeof(char));
 
   for (i = 1; i < (size_t)argc; ++i) {
     file_path = argv[i];
