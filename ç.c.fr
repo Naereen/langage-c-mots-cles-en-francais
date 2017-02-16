@@ -91,7 +91,7 @@ entier ccdille_parse_word(caractère* word, taille_t* len) {
   taille_t i;
   énumération ccdille_strcmp_result result;
   structure french_keyword keyword;
-  for (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
+  pour (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
     keyword = keywords[i];
     result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
     commuter (result) {
