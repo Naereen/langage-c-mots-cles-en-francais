@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     /* set the name of the file to create */
     memset(temp_file_name, '\0', sizeof(char)*strlen(temp_file_name));
-    asprintf(&temp_file_name, "%zu%s", i, ".c");
+    asprintf(&temp_file_name, "%lu%s", i, ".c");
 
     /* create the file to write in */
     temp = fopen(temp_file_name, "w");
