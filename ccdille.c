@@ -1,7 +1,5 @@
 #include "ccdille.h"
 
-
-
 int main(int argc, char* argv[]) {
   size_t i = 0;
 
@@ -82,7 +80,7 @@ int main(int argc, char* argv[]) {
 
   fclose(temp);
 
-  compilation_success = execl("/usr/bin/cc", "cc", "-o", "fr.out", temp_file_name, NULL);
+  compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", temp_file_name, NULL);
 
   free(temp_file_name);
 
