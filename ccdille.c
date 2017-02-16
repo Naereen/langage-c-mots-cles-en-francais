@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  temp_file_name = malloc(10 * sizeof(char));
+  temp_file_name = calloc(10 * sizeof(char));
 
   for (i = 1; i < (size_t)argc; ++i) {
     file_path = argv[i];
@@ -34,7 +34,6 @@ int main(int argc, char* argv[]) {
     }
 
     /* set the name of the file to create */
-    memset(temp_file_name, '\0', sizeof(char)*strlen(temp_file_name));
     asprintf(&temp_file_name, "%lu%s", i, ".c");
 
     /* create the file to write in */
