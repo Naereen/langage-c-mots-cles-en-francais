@@ -17,18 +17,16 @@ int main(int argc, char* argv[]) {
   int c;
   int parse_success;
   size_t len;
+  char* temp_file_name;
   size_t written;
 
   int compilation_success;
-  char* cmd;
-  char* cmd_prefix;
-  size_t cmd_prefix_len;
-
-  char* temp_file_name = malloc(10 * sizeof(char));
 
   if (argc == 1) {
     return 0;
   }
+
+  temp_file_name = malloc(10 * sizeof(char));
 
   for (i = 1; i < (size_t)argc; ++i) {
     file_path = argv[i];
@@ -52,7 +50,7 @@ int main(int argc, char* argv[]) {
     }
 
     /* read words from the file */
-    memset(buffer, '\0', BUF_SIZE);
+    len = 0;
     for (;;) {
       c = fgetc(file);
 
@@ -80,7 +78,7 @@ int main(int argc, char* argv[]) {
         }
       }
 
-      buffer[len] = c;
+      buffer[len] = (char) c;
       ++len;
     }
 
@@ -88,15 +86,11 @@ int main(int argc, char* argv[]) {
     fclose(file);
   }
 
-  cmd_prefix = "cc -o fr.out ";
-  cmd_prefix_len = strlen(cmd_prefix);
-  cmd = malloc((cmd_prefix_len + strlen(temp_file_name) + 1) * sizeof(char));
-  memcpy(cmd, cmd_prefix, cmd_prefix_len);
-  memcpy(&cmd[cmd_prefix_len], temp_file_name, strlen(temp_file_name) + 1);
+  fclose(temp);
+
   compilation_success = execl("/usr/bin/cc", "cc", "-o", "fr.out", temp_file_name, NULL);
 
   free(temp_file_name);
-  free(cmd);
 
   return compilation_success;
 }
