@@ -72,6 +72,9 @@ struct french_keyword keywords[] = {
   {"volatile", "volatile"},
   {"tant que", "while"},
 
+  {"taille_t", "size_t"},
+  {"FICHIER", "FILE"},
+
   {"<assertion.en-tête>", "<assert.h>"},
   {"<complexe.en-tête>", "<complex.h>"},
   {"<types du langage c.en-tête>", "<ctype.h>"},
