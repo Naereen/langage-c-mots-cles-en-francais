@@ -26,7 +26,7 @@ entier principale(entier argc, caractère* argv[]) {
 
 		/* open the file to parse */
 		file = fopen(file_path, "r");
-		if (file == NUL) {
+		si (file == NUL) {
 			fprintf(stderr, "File %s could not be opened\n", file_path);
 			retourner 1;
 		}
@@ -36,7 +36,7 @@ entier principale(entier argc, caractère* argv[]) {
 
 		/* create the file to write in */
 		temp = fopen(temp_file_name, "w");
-		if (temp == NUL) {
+		si (temp == NUL) {
 			fprintf(stderr, "Failed to create a new file.\n");
 			retourner 8;
 		}
@@ -48,20 +48,20 @@ entier principale(entier argc, caractère* argv[]) {
 
 			si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
 				parse_success = ccdille_parse_word((caractère*)buffer, &len);
-				if (parse_success || c == EOF) {
+				si (parse_success || c == EOF) {
 					written = fwrite((vide*)buffer, taille de(caractère), len, temp);
 					si (written < len) {
 						retourner 6;
 					}
 
-					if (c == EOF) {
+					si (c == EOF) {
 						casser;
 					}
 
 					buffer[0] = (caractère) c;
 					written = fwrite((void*)buffer, taille de(caractère), 1, temp);
 
-					if (written < 1) {
+					si (written < 1) {
 						retourner 7;
 					}
 
