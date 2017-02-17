@@ -5,12 +5,13 @@ entier principale(entier argc, caractère* argv[]) {
 
 	FICHIER *file, *temp;
 	caractère* file_path = NUL;
+	caractère constant* suffix = ".c.fr";
 
 	caractère buffer[BUF_SIZE];
 	entier c;
 	entier parse_success;
 	taille_t len;
-	caractère* temp_file_name;
+	caractère* translated_path;
 	taille_t written;
 
 	entier compilation_success;
@@ -19,10 +20,13 @@ entier principale(entier argc, caractère* argv[]) {
 		retourner 0;
 	}
 
-	temp_file_name = calloc(10, taille de(caractère));
-
 	pour (i = 1; i < (taille_t)argc; ++i) {
 		file_path = argv[i];
+
+		si (strcmp(&file_path[strlen(file_path)-strlen(suffix)], suffix) != 0) {
+			fprintf(stderr, "Unsupported file type %s\n", file_path);
+			retourner 1;
+		}
 
 		/* open the file to parse */
 		file = fopen(file_path, "r");
@@ -32,10 +36,12 @@ entier principale(entier argc, caractère* argv[]) {
 		}
 
 		/* set the name of the file to create */
-		asprintf(&temp_file_name, "%lu%s", i, ".c");
+		translated_path = malloc(strlen(file_path) * taille de(caractère));
+		memcpy(translated_path, file_path, strlen(file_path));
+		translated_path[strlen(file_path)-3] = '\0';
 
 		/* create the file to write in */
-		temp = fopen(temp_file_name, "w");
+		temp = fopen(translated_path, "w");
 		si (temp == NUL) {
 			fprintf(stderr, "Failed to create a new file.\n");
 			retourner 8;
@@ -76,13 +82,13 @@ entier principale(entier argc, caractère* argv[]) {
 
 		/* close the file */
 		fclose(file);
+
+		fclose(temp);
 	}
 
-	fclose(temp);
+	compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", translated_path, NUL);
 
-	compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", temp_file_name, NUL);
-
-	free(temp_file_name);
+	free(translated_path);
 
 	retourner compilation_success;
 }
