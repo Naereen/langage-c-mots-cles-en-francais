@@ -7,12 +7,8 @@ int main(int argc, char* argv[]) {
 	char* file_path = NULL;
 	char const* suffix = ".c.fr";
 
-	char buffer[BUF_SIZE];
-	int c;
 	int parse_success;
-	size_t len;
 	char* translated_path;
-	size_t written;
 
 	int compilation_success;
 
@@ -48,41 +44,13 @@ int main(int argc, char* argv[]) {
 		}
 
 		/* read words from the file */
-		len = 0;
-		for (;;) {
-			c = fgetc(file);
-
-			if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
-				parse_success = ccdille_parse_word((char*)buffer, &len);
-				if (parse_success || c == EOF) {
-					written = fwrite((void*)buffer, sizeof(char), len, temp);
-					if (written < len) {
-						return 6;
-					}
-
-					if (c == EOF) {
-						break;
-					}
-
-					buffer[0] = (char) c;
-					written = fwrite((void*)buffer, sizeof(char), 1, temp);
-
-					if (written < 1) {
-						return 7;
-					}
-
-					len = 0;
-					continue;
-				}
-			}
-
-			buffer[len] = (char) c;
-			++len;
+		parse_success = ccdille_parse_file(file, temp);
+		if (parse_success != 0) {
+			return parse_success;
 		}
 
 		/* close the file */
 		fclose(file);
-
 		fclose(temp);
 	}
 
@@ -91,6 +59,48 @@ int main(int argc, char* argv[]) {
 	free(translated_path);
 
 	return compilation_success;
+}
+
+int ccdille_parse_file(FILE* input, FILE* output) {
+	char buffer[BUF_SIZE];
+	int c;
+	int parse_success;
+	size_t len;
+	size_t written;
+
+	len = 0;
+	for (;;) {
+		c = fgetc(input);
+
+		if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
+			parse_success = ccdille_parse_word((char*)buffer, &len);
+			if (parse_success || c == EOF) {
+				written = fwrite((void*)buffer, sizeof(char), len, output);
+				if (written < len) {
+					return 6;
+				}
+
+				if (c == EOF) {
+					break;
+				}
+
+				buffer[0] = (char) c;
+				written = fwrite((void*)buffer, sizeof(char), 1, output);
+
+				if (written < 1) {
+					return 7;
+				}
+
+				len = 0;
+				continue;
+			}
+		}
+
+		buffer[len] = (char) c;
+		++len;
+	}
+
+	return 0;
 }
 
 int ccdille_parse_word(char* word, size_t* len) {

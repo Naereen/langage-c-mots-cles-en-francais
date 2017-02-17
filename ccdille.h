@@ -21,6 +21,7 @@ struct french_keyword {
   char* translation;
 };
 
+int ccdille_parse_file(FILE* input, FILE* output);
 int ccdille_parse_word(char* word, size_t* len);
 size_t ccdille_min(size_t a, size_t b);
 enum ccdille_strcmp_result ccdille_strcmp(char const* a, size_t len_a, char const* b, size_t len_b);

@@ -7,12 +7,8 @@ entier principale(entier argc, caractère* argv[]) {
 	caractère* file_path = NUL;
 	caractère constant* suffix = ".c.fr";
 
-	caractère buffer[BUF_SIZE];
-	entier c;
 	entier parse_success;
-	taille_t len;
 	caractère* translated_path;
-	taille_t written;
 
 	entier compilation_success;
 
@@ -48,41 +44,13 @@ entier principale(entier argc, caractère* argv[]) {
 		}
 
 		/* read words from the file */
-		len = 0;
-		pour (;;) {
-			c = fgetc(file);
-
-			si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
-				parse_success = ccdille_parse_word((caractère*)buffer, &len);
-				si (parse_success || c == EOF) {
-					written = fwrite((vide*)buffer, taille de(caractère), len, temp);
-					si (written < len) {
-						retourner 6;
-					}
-
-					si (c == EOF) {
-						casser;
-					}
-
-					buffer[0] = (caractère) c;
-					written = fwrite((void*)buffer, taille de(caractère), 1, temp);
-
-					si (written < 1) {
-						retourner 7;
-					}
-
-					len = 0;
-					continuer;
-				}
-			}
-
-			buffer[len] = (caractère) c;
-			++len;
+		parse_success = ccdille_parse_file(file, temp);
+		si (parse_success != 0) {
+			retourner parse_success;
 		}
 
 		/* close the file */
 		fclose(file);
-
 		fclose(temp);
 	}
 
@@ -91,6 +59,48 @@ entier principale(entier argc, caractère* argv[]) {
 	free(translated_path);
 
 	retourner compilation_success;
+}
+
+entier ccdille_parse_file(FICHIER* input, FICHIER* output) {
+	caractère buffer[BUF_SIZE];
+	entier c;
+	entier parse_success;
+	taille_t len;
+	taille_t written;
+
+	len = 0;
+	pour (;;) {
+		c = fgetc(input);
+
+		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
+			parse_success = ccdille_parse_word((caractère*)buffer, &len);
+			si (parse_success || c == EOF) {
+				written = fwrite((vide*)buffer, taille de(caractère), len, output);
+				si (written < len) {
+					retourner 6;
+				}
+
+				si (c == EOF) {
+					casser;
+				}
+
+				buffer[0] = (caractère) c;
+				written = fwrite((void*)buffer, taille de(caractère), 1, output);
+
+				si (written < 1) {
+					retourner 7;
+				}
+
+				len = 0;
+				continuer;
+			}
+		}
+
+		buffer[len] = (caractère) c;
+		++len;
+	}
+
+	retourner 0;
 }
 
 entier ccdille_parse_word(caractère* word, taille_t* len) {
