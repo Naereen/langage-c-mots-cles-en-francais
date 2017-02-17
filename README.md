@@ -7,17 +7,20 @@ C'est un précompilateur qui traduit le code en français vers du code en C.
 Coréalisé par DiestVanMaitre_culain et Emersion.
 
 # Exemples d'utilisation
+
 ## Compilation
+
 Pour compiler vos programmes, utiliser la commande suivante
 ```shell
-ç mon_programme.c.fr 
+ç mon_programme.c.fr
 ```
+
 ## L'Algorithme D'Euclide
 
 ```c
 #inclure <entrées et sorties standard.en-tête>
 
-non signé entier algorithme_d_euclide(non signé entier a, non signé entier b) {
+entier non signé algorithme_d_euclide(entier non signé a, entier non signé b) {
   si (a < b) {
     retourner algorithme_d_euclide(b, a);
   }
@@ -25,16 +28,11 @@ non signé entier algorithme_d_euclide(non signé entier a, non signé entier b)
 }
 
 entier principale(entier argc, caractère constant **argv) {
-  non signé entier a = 8;
-  non signé entier b = 12;
-  non signé entier resultat = algorithme_d_euclide(a, b);
+  entier non signé a = 8;
+  entier non signé b = 12;
+  entier non signé resultat = algorithme_d_euclide(a, b);
   printf("%u\n", resultat);
 
   retourner 0;
 }
-
 ```
-
-
-
-

@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  temp_file_name = calloc(10 * sizeof(char));
+  temp_file_name = calloc(10, sizeof(char));
 
   for (i = 1; i < (size_t)argc; ++i) {
     file_path = argv[i];
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     for (;;) {
       c = fgetc(file);
 
-      if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == '*' || c == EOF) {
+      if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
         parse_success = ccdille_parse_word((char*)buffer, &len);
         if (parse_success || c == EOF) {
           written = fwrite((void*)buffer, sizeof(char), len, temp);
