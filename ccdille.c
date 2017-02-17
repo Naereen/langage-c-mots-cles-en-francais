@@ -7,11 +7,9 @@ int main(int argc, char* argv[]) {
   char* file_path = NULL;
 
   char buffer[BUF_SIZE];
-  int c;
-  int parse_success;
-  size_t len;
+  int c, parse_success;
+  size_t len, written;
   char* temp_file_name;
-  size_t written;
 
   int compilation_success;
 
@@ -81,7 +79,6 @@ int main(int argc, char* argv[]) {
   fclose(temp);
 
   compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", temp_file_name, NULL);
-
   free(temp_file_name);
 
   return compilation_success;
