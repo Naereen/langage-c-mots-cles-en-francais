@@ -3,10 +3,14 @@ CFLAGS = -ansi -O2
 DBGFLAGS = -W -Wall -Werror -Wextra -Wno-unused-parameter -pedantic -pedantic-errors -g -ansi
 PREFIX = /usr/local
 
-all:
-	$(CC) $(CFLAGS) -o ç ccdille.c
-debug:
-	$(CC) $(DBGFLAGS) -o ç ccdille.c
+ç: ç.c
+	$(CC) $(CFLAGS) -o ç ç.c
+ç.c: ç.c.fr
+	./ç ç.c.fr
+
+all: ç
+debug: ç.c
+	$(CC) $(DBGFLAGS) -o ç ç.c
 clean:
 	rm -rf ç
 install: all
