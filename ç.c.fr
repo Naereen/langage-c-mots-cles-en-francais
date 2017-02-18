@@ -3,80 +3,80 @@
 entier principale(entier argc, caractère* argv[]) {
 	taille_t i = 0;
 
-	FICHIER *file, *temp;
-	caractère* file_path = NUL;
-	caractère constant* suffix = ".c.fr";
+	FICHIER *fichier, *temporaire;
+	caractère* chemin_du_fichier = NUL;
+	caractère constant* suffixe = ".c.fr";
 
-	entier parse_success;
-	caractère* translated_path;
+	entier succes_de_la_traduction;
+	caractère* chemin_de_la_traduction;
 
-	entier compilation_success;
+	entier succes_de_la_compilation;
 
 	si (argc == 1) {
 		retourner 0;
 	}
 
 	pour (i = 1; i < (taille_t)argc; ++i) {
-		file_path = argv[i];
+		chemin_du_fichier = argv[i];
 
-		si (strcmp(&file_path[strlen(file_path)-strlen(suffix)], suffix) != 0) {
-			fprintf(stderr, "Unsupported file type %s\n", file_path);
+		si (strcmp(&chemin_du_fichier[strlen(chemin_du_fichier)-strlen(suffixe)], suffixe) != 0) {
+			fprintf(stderr, "Type de fichier non supporté %s\n", chemin_du_fichier);
 			retourner 1;
 		}
 
-		/* open the file to parse */
-		file = fopen(file_path, "r");
-		si (file == NUL) {
-			fprintf(stderr, "File %s could not be opened\n", file_path);
+		/* J4OUVRE */
+		fichier = fopen(chemin_du_fichier, "r");
+		si (fichier == NUL) {
+			fprintf(stderr, "Le fichier %s n'a pas pu etre ouvert\n", chemin_du_fichier);
 			retourner 1;
 		}
 
-		/* set the name of the file to create */
-		translated_path = malloc(strlen(file_path) * taille de(caractère));
-		memcpy(translated_path, file_path, strlen(file_path));
-		translated_path[strlen(file_path)-3] = '\0';
+		/* set the name of the fichier to create */
+		chemin_de_la_traduction = malloc(strlen(chemin_du_fichier) * taille de(caractère));
+		memcpy(chemin_de_la_traduction, chemin_du_fichier, strlen(chemin_du_fichier));
+		chemin_de_la_traduction[strlen(chemin_du_fichier)-3] = '\0';
 
-		/* create the file to write in */
-		temp = fopen(translated_path, "w");
-		si (temp == NUL) {
-			fprintf(stderr, "Failed to create a new file.\n");
+		/* create the fichier to write in */
+		temporaire = fopen(chemin_de_la_traduction, "w");
+		si (temporaire == NUL) {
+			fprintf(stderr, "Failed to create a new fichier.\n");
 			retourner 8;
 		}
 
-		/* read words from the file */
-		parse_success = ccdille_parse_file(file, temp);
-		si (parse_success != 0) {
-			retourner parse_success;
+		/* read words from the fichier */
+		succes_de_la_traduction = ccdille_traduire_fichier(fichier, temporaire);
+		si (succes_de_la_traduction != 0) {
+			retourner succes_de_la_traduction;
 		}
 
-		/* close the file */
-		fclose(file);
-		fclose(temp);
+		/* JE FERME */
+		fclose(fichier);
+		fclose(temporaire);
 	}
 
-	compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", translated_path, NUL);
+	succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", "a.sortie", chemin_de_la_traduction, NUL);
 
-	free(translated_path);
+	free(chemin_de_la_traduction);
 
-	retourner compilation_success;
+	retourner succes_de_la_compilation;
 }
 
-entier ccdille_parse_file(FICHIER* input, FICHIER* output) {
-	caractère buffer[BUF_SIZE];
+entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie) {
+	caractère tampon[TAILLE_DU_TAMPON];
 	entier c;
-	entier parse_success;
-	taille_t len;
-	taille_t written;
+	entier succes_de_la_traduction;
+	taille_t longueur;
+	taille_t ecrit;
 
-	len = 0;
+	longueur = 0;
 	pour (;;) {
-		c = fgetc(input);
+		c = fgetc(entree);
 
 		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
-			parse_success = ccdille_parse_word((caractère*)buffer, &len);
-			si (parse_success || c == EOF) {
-				written = fwrite((vide*)buffer, taille de(caractère), len, output);
-				si (written < len) {
+			succes_de_la_traduction = ccdille_traduire_mot((caractère*)tampon, &longueur);
+			si (succes_de_la_traduction || c == EOF) {
+				ecrit = fwrite((vide*)tampon, taille de(caractère), longueur, sortie);
+				si (ecrit < longueur) {
 					retourner 6;
 				}
 
@@ -84,40 +84,40 @@ entier ccdille_parse_file(FICHIER* input, FICHIER* output) {
 					casser;
 				}
 
-				buffer[0] = (caractère) c;
-				written = fwrite((void*)buffer, taille de(caractère), 1, output);
+				tampon[0] = (caractère) c;
+				ecrit = fwrite((void*)tampon, taille de(caractère), 1, sortie);
 
-				si (written < 1) {
+				si (ecrit < 1) {
 					retourner 7;
 				}
 
-				len = 0;
+				longueur = 0;
 				continuer;
 			}
 		}
 
-		buffer[len] = (caractère) c;
-		++len;
+		tampon[longueur] = (caractère) c;
+		++longueur;
 	}
 
 	retourner 0;
 }
 
-entier ccdille_parse_word(caractère* word, taille_t* len) {
+entier ccdille_traduire_mot(caractère* mot, taille_t* longueur) {
 	taille_t i;
-	énumération ccdille_strcmp_result result;
-	structure french_keyword keyword;
-	pour (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
-		keyword = keywords[i];
-		result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
-		commuter (result) {
-		cas CCDILLE_MATCH:
-			*len = strlen(keyword.translation);
-			memcpy(word, keyword.translation, *len);
+	énumération ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
+	structure mot_cle_francais_t mot_cle_francais;
+	pour (i = 0; i < taille de(mot_cles_francais)/taille de(*mot_cles_francais); i++) {
+		mot_cle_francais = mot_cles_francais[i];
+		resultat = ccdille_comparaison_de_chaine_de_caractere(mot, *longueur, mot_cle_francais.mot, strlen(mot_cle_francais.mot));
+		commuter (resultat) {
+		cas CCDILLE_CORRESPONDANCE:
+			*longueur = strlen(mot_cle_francais.traduction);
+			memcpy(mot, mot_cle_francais.traduction, *longueur);
 			retourner 1;
-		cas CCDILLE_PREFIX:
+		cas CCDILLE_PREFIXE:
 			retourner 0;
-		cas CCDILLE_NO_MATCH:
+		cas CCDILLE_PAS_DE_CORRESPONDANCE:
 			casser;
 		/* mdr ya pas de par défaut */
 		}
@@ -130,18 +130,18 @@ taille_t ccdille_min(taille_t a, taille_t b) {
 	retourner a <= b ? a : b;
 }
 
-énumération ccdille_strcmp_result ccdille_strcmp(caractère constant* a, taille_t len_a, caractère constant* b, taille_t len_b) {
+énumération ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(caractère constant* a, taille_t taille_de_a, caractère constant* b, taille_t taille_de_b) {
 	taille_t i;
-	pour (i = 0; i < ccdille_min(len_a, len_b); i++) {
+	pour (i = 0; i < ccdille_min(taille_de_a, taille_de_b); i++) {
 		si (a[i] != b[i]) {
-			retourner CCDILLE_NO_MATCH;
+			retourner CCDILLE_PAS_DE_CORRESPONDANCE;
 		}
 	}
-	si (len_a == len_b) {
-		retourner CCDILLE_MATCH;
+	si (taille_de_a == taille_de_b) {
+		retourner CCDILLE_CORRESPONDANCE;
 	}
-	si (len_a > len_b || b[i] != ' ') {
-		retourner CCDILLE_NO_MATCH;
+	si (taille_de_a > taille_de_b || b[i] != ' ') {
+		retourner CCDILLE_PAS_DE_CORRESPONDANCE;
 	}
-	retourner CCDILLE_PREFIX;
+	retourner CCDILLE_PREFIXE;
 }

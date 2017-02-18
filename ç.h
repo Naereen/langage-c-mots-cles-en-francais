@@ -6,25 +6,25 @@
 #include <unistd.h>
 #include <string.h>
 
-#define BUF_SIZE 1024
+#define TAILLE_DU_TAMPON 1024
 
-enum ccdille_strcmp_result {
-  CCDILLE_NO_MATCH,
-  CCDILLE_MATCH,
-  CCDILLE_PREFIX
+enum ccdille_comparaison_de_chaine_de_caractere_resultat {
+  CCDILLE_PAS_DE_CORRESPONDANCE,
+  CCDILLE_CORRESPONDANCE,
+  CCDILLE_PREFIXE
 };
 
-struct french_keyword {
-  char* word;
-  char* translation;
+struct mot_cle_francais_t {
+  char* mot;
+  char* traduction;
 };
 
-int ccdille_parse_file(FILE* input, FILE* output);
-int ccdille_parse_word(char* word, size_t* len);
-size_t ccdille_min(size_t a, size_t b);
-enum ccdille_strcmp_result ccdille_strcmp(char const* a, size_t len_a, char const* b, size_t len_b);
+int ccdille_traduire_fichier(FILE* entree, FILE* sortie);
+int ccdille_traduire_mot(char* mot, size_t* longueur);
+size_t ccdille_minimum(size_t a, size_t b);
+enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const* a, size_t longueur_de_a, char const* b, size_t longueur_de_b);
 
-struct french_keyword keywords[] = {
+struct mot_cle_francais_t mot_cles_francais[] = {
   {"#définir", "#define"},
   {"#retirer la définition", "#undef"},
   {"#inclure", "#include"},

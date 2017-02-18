@@ -3,80 +3,80 @@
 int main(int argc, char* argv[]) {
 	size_t i = 0;
 
-	FILE *file, *temp;
-	char* file_path = NULL;
-	char const* suffix = ".c.fr";
+	FILE *fichier, *temporaire;
+	char* chemin_du_fichier = NULL;
+	char const* suffixe = ".c.fr";
 
-	int parse_success;
-	char* translated_path;
+	int succes_de_la_traduction;
+	char* chemin_de_la_traduction;
 
-	int compilation_success;
+	int succes_de_la_compilation;
 
 	if (argc == 1) {
 		return 0;
 	}
 
 	for (i = 1; i < (size_t)argc; ++i) {
-		file_path = argv[i];
+		chemin_du_fichier = argv[i];
 
-		if (strcmp(&file_path[strlen(file_path)-strlen(suffix)], suffix) != 0) {
-			fprintf(stderr, "Unsupported file type %s\n", file_path);
+		if (strcmp(&chemin_du_fichier[strlen(chemin_du_fichier)-strlen(suffixe)], suffixe) != 0) {
+			fprintf(stderr, "Type de fichier non supporté %s\n", chemin_du_fichier);
 			return 1;
 		}
 
-		/* open the file to parse */
-		file = fopen(file_path, "r");
-		if (file == NULL) {
-			fprintf(stderr, "File %s could not be opened\n", file_path);
+		/* J4OUVRE */
+		fichier = fopen(chemin_du_fichier, "r");
+		if (fichier == NULL) {
+			fprintf(stderr, "Le fichier %s n'a pas pu etre ouvert\n", chemin_du_fichier);
 			return 1;
 		}
 
-		/* set the name of the file to create */
-		translated_path = malloc(strlen(file_path) * sizeof(char));
-		memcpy(translated_path, file_path, strlen(file_path));
-		translated_path[strlen(file_path)-3] = '\0';
+		/* set the name of the fichier to create */
+		chemin_de_la_traduction = malloc(strlen(chemin_du_fichier) * sizeof(char));
+		memcpy(chemin_de_la_traduction, chemin_du_fichier, strlen(chemin_du_fichier));
+		chemin_de_la_traduction[strlen(chemin_du_fichier)-3] = '\0';
 
-		/* create the file to write in */
-		temp = fopen(translated_path, "w");
-		if (temp == NULL) {
-			fprintf(stderr, "Failed to create a new file.\n");
+		/* create the fichier to write in */
+		temporaire = fopen(chemin_de_la_traduction, "w");
+		if (temporaire == NULL) {
+			fprintf(stderr, "Failed to create a new fichier.\n");
 			return 8;
 		}
 
-		/* read words from the file */
-		parse_success = ccdille_parse_file(file, temp);
-		if (parse_success != 0) {
-			return parse_success;
+		/* read words from the fichier */
+		succes_de_la_traduction = ccdille_traduire_fichier(fichier, temporaire);
+		if (succes_de_la_traduction != 0) {
+			return succes_de_la_traduction;
 		}
 
-		/* close the file */
-		fclose(file);
-		fclose(temp);
+		/* JE FERME */
+		fclose(fichier);
+		fclose(temporaire);
 	}
 
-	compilation_success = execl("/usr/bin/cc", "cc", "-o", "a.sortie", translated_path, NULL);
+	succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", "a.sortie", chemin_de_la_traduction, NULL);
 
-	free(translated_path);
+	free(chemin_de_la_traduction);
 
-	return compilation_success;
+	return succes_de_la_compilation;
 }
 
-int ccdille_parse_file(FILE* input, FILE* output) {
-	char buffer[BUF_SIZE];
+int ccdille_traduire_fichier(FILE* entree, FILE* sortie) {
+	char tampon[TAILLE_DU_TAMPON];
 	int c;
-	int parse_success;
-	size_t len;
-	size_t written;
+	int succes_de_la_traduction;
+	size_t longueur;
+	size_t ecrit;
 
-	len = 0;
+	longueur = 0;
 	for (;;) {
-		c = fgetc(input);
+		c = fgetc(entree);
 
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
-			parse_success = ccdille_parse_word((char*)buffer, &len);
-			if (parse_success || c == EOF) {
-				written = fwrite((void*)buffer, sizeof(char), len, output);
-				if (written < len) {
+			succes_de_la_traduction = ccdille_traduire_mot((char*)tampon, &longueur);
+			if (succes_de_la_traduction || c == EOF) {
+				ecrit = fwrite((void*)tampon, sizeof(char), longueur, sortie);
+				if (ecrit < longueur) {
 					return 6;
 				}
 
@@ -84,40 +84,40 @@ int ccdille_parse_file(FILE* input, FILE* output) {
 					break;
 				}
 
-				buffer[0] = (char) c;
-				written = fwrite((void*)buffer, sizeof(char), 1, output);
+				tampon[0] = (char) c;
+				ecrit = fwrite((void*)tampon, sizeof(char), 1, sortie);
 
-				if (written < 1) {
+				if (ecrit < 1) {
 					return 7;
 				}
 
-				len = 0;
+				longueur = 0;
 				continue;
 			}
 		}
 
-		buffer[len] = (char) c;
-		++len;
+		tampon[longueur] = (char) c;
+		++longueur;
 	}
 
 	return 0;
 }
 
-int ccdille_parse_word(char* word, size_t* len) {
+int ccdille_traduire_mot(char* mot, size_t* longueur) {
 	size_t i;
-	enum ccdille_strcmp_result result;
-	struct french_keyword keyword;
-	for (i = 0; i < sizeof(keywords)/sizeof(*keywords); i++) {
-		keyword = keywords[i];
-		result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
-		switch (result) {
-		case CCDILLE_MATCH:
-			*len = strlen(keyword.translation);
-			memcpy(word, keyword.translation, *len);
+	enum ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
+	struct mot_cle_francais_t mot_cle_francais;
+	for (i = 0; i < sizeof(mot_cles_francais)/sizeof(*mot_cles_francais); i++) {
+		mot_cle_francais = mot_cles_francais[i];
+		resultat = ccdille_comparaison_de_chaine_de_caractere(mot, *longueur, mot_cle_francais.mot, strlen(mot_cle_francais.mot));
+		switch (resultat) {
+		case CCDILLE_CORRESPONDANCE:
+			*longueur = strlen(mot_cle_francais.traduction);
+			memcpy(mot, mot_cle_francais.traduction, *longueur);
 			return 1;
-		case CCDILLE_PREFIX:
+		case CCDILLE_PREFIXE:
 			return 0;
-		case CCDILLE_NO_MATCH:
+		case CCDILLE_PAS_DE_CORRESPONDANCE:
 			break;
 		/* mdr ya pas de default */
 		}
@@ -130,18 +130,18 @@ size_t ccdille_min(size_t a, size_t b) {
 	return a <= b ? a : b;
 }
 
-enum ccdille_strcmp_result ccdille_strcmp(char const* a, size_t len_a, char const* b, size_t len_b) {
+enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const* a, size_t taille_de_a, char const* b, size_t taille_de_b) {
 	size_t i;
-	for (i = 0; i < ccdille_min(len_a, len_b); i++) {
+	for (i = 0; i < ccdille_min(taille_de_a, taille_de_b); i++) {
 		if (a[i] != b[i]) {
-			return CCDILLE_NO_MATCH;
+			return CCDILLE_PAS_DE_CORRESPONDANCE;
 		}
 	}
-	if (len_a == len_b) {
-		return CCDILLE_MATCH;
+	if (taille_de_a == taille_de_b) {
+		return CCDILLE_CORRESPONDANCE;
 	}
-	if (len_a > len_b || b[i] != ' ') {
-		return CCDILLE_NO_MATCH;
+	if (taille_de_a > taille_de_b || b[i] != ' ') {
+		return CCDILLE_PAS_DE_CORRESPONDANCE;
 	}
-	return CCDILLE_PREFIX;
+	return CCDILLE_PREFIXE;
 }
