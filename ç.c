@@ -1,4 +1,4 @@
-#include "ccdille.h"
+#include "ç.h"
 
 int main(int argc, char* argv[]) {
 	size_t i = 0;
@@ -104,44 +104,44 @@ int ccdille_parse_file(FILE* input, FILE* output) {
 }
 
 int ccdille_parse_word(char* word, size_t* len) {
-  size_t i;
-  enum ccdille_strcmp_result result;
-  struct french_keyword keyword;
-  for (i = 0; i < sizeof(keywords)/sizeof(*keywords); i++) {
-    keyword = keywords[i];
-    result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
-    switch (result) {
-    case CCDILLE_MATCH:
-      *len = strlen(keyword.translation);
-      memcpy(word, keyword.translation, *len);
-      return 1;
-    case CCDILLE_PREFIX:
-      return 0;
-    case CCDILLE_NO_MATCH:
-      break;
-    /* mdr ya pas de default */
-    }
-  }
+	size_t i;
+	enum ccdille_strcmp_result result;
+	struct french_keyword keyword;
+	for (i = 0; i < sizeof(keywords)/sizeof(*keywords); i++) {
+		keyword = keywords[i];
+		result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
+		switch (result) {
+		case CCDILLE_MATCH:
+			*len = strlen(keyword.translation);
+			memcpy(word, keyword.translation, *len);
+			return 1;
+		case CCDILLE_PREFIX:
+			return 0;
+		case CCDILLE_NO_MATCH:
+			break;
+		/* mdr ya pas de default */
+		}
+	}
 
-  return 1;
+	return 1;
 }
 
 size_t ccdille_min(size_t a, size_t b) {
-  return a <= b ? a : b;
+	return a <= b ? a : b;
 }
 
 enum ccdille_strcmp_result ccdille_strcmp(char const* a, size_t len_a, char const* b, size_t len_b) {
-  size_t i;
-  for (i = 0; i < ccdille_min(len_a, len_b); i++) {
-    if (a[i] != b[i]) {
-      return CCDILLE_NO_MATCH;
-    }
-  }
-  if (len_a == len_b) {
-    return CCDILLE_MATCH;
-  }
-  if (len_a > len_b || b[i] != ' ') {
-    return CCDILLE_NO_MATCH;
-  }
-  return CCDILLE_PREFIX;
+	size_t i;
+	for (i = 0; i < ccdille_min(len_a, len_b); i++) {
+		if (a[i] != b[i]) {
+			return CCDILLE_NO_MATCH;
+		}
+	}
+	if (len_a == len_b) {
+		return CCDILLE_MATCH;
+	}
+	if (len_a > len_b || b[i] != ' ') {
+		return CCDILLE_NO_MATCH;
+	}
+	return CCDILLE_PREFIX;
 }

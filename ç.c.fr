@@ -1,4 +1,4 @@
-#inclure "ccdille.h"
+#inclure "ç.h"
 
 entier principale(entier argc, caractère* argv[]) {
 	taille_t i = 0;
@@ -104,44 +104,44 @@ entier ccdille_parse_file(FICHIER* input, FICHIER* output) {
 }
 
 entier ccdille_parse_word(caractère* word, taille_t* len) {
-  taille_t i;
-  énumération ccdille_strcmp_result result;
-  structure french_keyword keyword;
-  pour (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
-    keyword = keywords[i];
-    result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
-    commuter (result) {
-    cas CCDILLE_MATCH:
-      *len = strlen(keyword.translation);
-      memcpy(word, keyword.translation, *len);
-      retourner 1;
-    cas CCDILLE_PREFIX:
-      retourner 0;
-    cas CCDILLE_NO_MATCH:
-      casser;
-    /* mdr ya pas de par défaut */
-    }
-  }
+	taille_t i;
+	énumération ccdille_strcmp_result result;
+	structure french_keyword keyword;
+	pour (i = 0; i < taille de(keywords)/taille de(*keywords); i++) {
+		keyword = keywords[i];
+		result = ccdille_strcmp(word, *len, keyword.word, strlen(keyword.word));
+		commuter (result) {
+		cas CCDILLE_MATCH:
+			*len = strlen(keyword.translation);
+			memcpy(word, keyword.translation, *len);
+			retourner 1;
+		cas CCDILLE_PREFIX:
+			retourner 0;
+		cas CCDILLE_NO_MATCH:
+			casser;
+		/* mdr ya pas de par défaut */
+		}
+	}
 
-  retourner 1;
+	retourner 1;
 }
 
 taille_t ccdille_min(taille_t a, taille_t b) {
-  retourner a <= b ? a : b;
+	retourner a <= b ? a : b;
 }
 
 énumération ccdille_strcmp_result ccdille_strcmp(caractère constant* a, taille_t len_a, caractère constant* b, taille_t len_b) {
-  taille_t i;
-  pour (i = 0; i < ccdille_min(len_a, len_b); i++) {
-    si (a[i] != b[i]) {
-      retourner CCDILLE_NO_MATCH;
-    }
-  }
-  si (len_a == len_b) {
-    retourner CCDILLE_MATCH;
-  }
-  si (len_a > len_b || b[i] != ' ') {
-    retourner CCDILLE_NO_MATCH;
-  }
-  retourner CCDILLE_PREFIX;
+	taille_t i;
+	pour (i = 0; i < ccdille_min(len_a, len_b); i++) {
+		si (a[i] != b[i]) {
+			retourner CCDILLE_NO_MATCH;
+		}
+	}
+	si (len_a == len_b) {
+		retourner CCDILLE_MATCH;
+	}
+	si (len_a > len_b || b[i] != ' ') {
+		retourner CCDILLE_NO_MATCH;
+	}
+	retourner CCDILLE_PREFIX;
 }
