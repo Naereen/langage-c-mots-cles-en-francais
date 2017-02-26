@@ -128,7 +128,7 @@ int ccdille_traduire_fichier(FILE* entree, FILE* sortie, enum ccdille_sens sens)
 	for (;;) {
 		c = fgetc(entree);
 
-		if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
+		if (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == '|' || c == '&' || c == '*' || c == '!' || c == EOF) {
 			succes_de_la_traduction = ccdille_traduire_mot((char*)tampon, &longueur, sens);
 			if (succes_de_la_traduction || c == EOF) {
 				ecrit = fwrite((void*)tampon, sizeof(char), longueur, sortie);
