@@ -7,11 +7,17 @@
 #include <unistd.h>
 
 #define TAILLE_DU_TAMPON 1024
+#define EXTENSION_DE_FICHIER ".fr"
 
 enum ccdille_comparaison_de_chaine_de_caractere_resultat {
   CCDILLE_PAS_DE_CORRESPONDANCE,
   CCDILLE_CORRESPONDANCE,
   CCDILLE_PREFIXE
+};
+
+enum ccdille_sens {
+  CCDILLE_A_L_ENDROIT,
+  CCDILLE_A_L_ENVERS
 };
 
 struct mot_cle_francais_t {
@@ -20,8 +26,8 @@ struct mot_cle_francais_t {
 };
 
 int ccdille_utilisation();
-int ccdille_traduire_fichier(FILE* entree, FILE* sortie);
-int ccdille_traduire_mot(char* mot, size_t* longueur);
+int ccdille_traduire_fichier(FILE* entree, FILE* sortie, enum ccdille_sens sens);
+int ccdille_traduire_mot(char* mot_a_traduire, size_t* longueur, enum ccdille_sens sens);
 size_t ccdille_minimum(size_t a, size_t b);
 enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const *a, size_t longueur_de_a, char const *b, size_t longueur_de_b);
 

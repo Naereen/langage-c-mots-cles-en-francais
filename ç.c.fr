@@ -6,10 +6,10 @@ entier principale(entier argc, caractère* argv[]) {
 	FICHIER *fichier_d_entree, *fichier_de_la_traduction;
 	caractère *action, *argument;
 	caractère *chemin_d_entree, *chemin_de_la_sortie;
-	caractère constant *suffixe = ".fr";
 
 	entier succes_de_la_traduction;
 	caractère *chemin_de_la_traduction;
+	énumération ccdille_sens sens = CCDILLE_A_L_ENDROIT;
 
 	entier succes_de_la_compilation;
 
@@ -32,8 +32,14 @@ entier principale(entier argc, caractère* argv[]) {
 			si (strcmp(argument, "-o") == 0) {
 				i++;
 				chemin_de_la_sortie = argv[i];
+			} sinon si (strcmp(argument, "-1") == 0) {
+				si (strcmp(action, "traduire") != 0) {
+					fprintf(stderr, "Impossible d'utiliser l'option -1 sans l'action traduire\n");
+					retourner 1;
+				}
+				sens = CCDILLE_A_L_ENVERS;
 			} sinon {
-				printf("Option non reconnue: %s\n", argument);
+				fprintf(stderr, "Option non reconnue: %s\n", argument);
 				retourner 1;
 			}
 			continuer;
@@ -44,16 +50,20 @@ entier principale(entier argc, caractère* argv[]) {
 		si (strcmp(chemin_d_entree, "-") == 0) {
 			fichier_d_entree = stdin;
 		} sinon {
-			si (strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(suffixe)], suffixe) != 0) {
+			si (sens == CCDILLE_A_L_ENDROIT && strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(EXTENSION_DE_FICHIER)], EXTENSION_DE_FICHIER) != 0) {
 				fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
 				retourner 1;
 			}
 
 			/* définir le nom du fichier traduit qui sera produit */
 			free(chemin_de_la_traduction);
-			chemin_de_la_traduction = malloc(strlen(chemin_d_entree) * taille de(caractère));
-			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree));
-			chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
+			chemin_de_la_traduction = malloc((strlen(chemin_d_entree) + strlen(EXTENSION_DE_FICHIER) + 1) * taille de(caractère));
+			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree) + 1);
+			si (sens == CCDILLE_A_L_ENDROIT) {
+				chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
+			} sinon {
+				strcat(chemin_de_la_traduction, EXTENSION_DE_FICHIER);
+			}
 
 			fichier_d_entree = fopen(chemin_d_entree, "r");
 			si (fichier_d_entree == NUL) {
@@ -80,7 +90,7 @@ entier principale(entier argc, caractère* argv[]) {
 		}
 
 		/* read words from the fichier */
-		succes_de_la_traduction = ccdille_traduire_fichier(fichier_d_entree, fichier_de_la_traduction);
+		succes_de_la_traduction = ccdille_traduire_fichier(fichier_d_entree, fichier_de_la_traduction, sens);
 		si (succes_de_la_traduction != 0) {
 			retourner succes_de_la_traduction;
 		}
@@ -103,11 +113,11 @@ entier principale(entier argc, caractère* argv[]) {
 }
 
 entier ccdille_utilisation() {
-	printf("Utilisation : ç traduire|construire [-o sortie.out] [entrée...]\n");
+	printf("Utilisation : ç traduire|construire [-1] [-o sortie.out] [entrée...]\n");
 	retourner 1;
 }
 
-entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie) {
+entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération ccdille_sens sens) {
 	caractère tampon[TAILLE_DU_TAMPON];
 	entier c;
 	entier succes_de_la_traduction;
@@ -119,7 +129,7 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie) {
 		c = fgetc(entree);
 
 		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == EOF) {
-			succes_de_la_traduction = ccdille_traduire_mot((caractère*)tampon, &longueur);
+			succes_de_la_traduction = ccdille_traduire_mot((caractère*)tampon, &longueur, sens);
 			si (succes_de_la_traduction || c == EOF) {
 				ecrit = fwrite((vide*)tampon, taille de(caractère), longueur, sortie);
 				si (ecrit < longueur) {
@@ -149,17 +159,27 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie) {
 	retourner 0;
 }
 
-entier ccdille_traduire_mot(caractère* mot, taille_t* longueur) {
+entier ccdille_traduire_mot(caractère* mot_a_traduire, taille_t* longueur, énumération ccdille_sens sens) {
 	taille_t i;
 	énumération ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
 	structure mot_cle_francais_t mot_cle_francais;
+	caractère *mot, *traduction;
+
 	pour (i = 0; i < taille de(mot_cles_francais)/taille de(*mot_cles_francais); i++) {
 		mot_cle_francais = mot_cles_francais[i];
-		resultat = ccdille_comparaison_de_chaine_de_caractere(mot, *longueur, mot_cle_francais.mot, strlen(mot_cle_francais.mot));
+		si (sens == CCDILLE_A_L_ENDROIT) {
+			mot = mot_cle_francais.mot;
+			traduction = mot_cle_francais.traduction;
+		} sinon {
+			mot = mot_cle_francais.traduction;
+			traduction = mot_cle_francais.mot;
+		}
+
+		resultat = ccdille_comparaison_de_chaine_de_caractere(mot_a_traduire, *longueur, mot, strlen(mot));
 		commuter (resultat) {
 		cas CCDILLE_CORRESPONDANCE:
-			*longueur = strlen(mot_cle_francais.traduction);
-			memcpy(mot, mot_cle_francais.traduction, *longueur);
+			*longueur = strlen(traduction);
+			memcpy(mot_a_traduire, traduction, *longueur);
 			retourner 1;
 		cas CCDILLE_PREFIXE:
 			retourner 0;
