@@ -3,62 +3,97 @@
 entier principale(entier argc, caractère* argv[]) {
 	taille_t i = 0;
 
-	FICHIER *fichier, *temporaire;
-	caractère* chemin_du_fichier = NUL;
-	caractère constant* suffixe = ".c.fr";
+	FICHIER *fichier_d_entree, *fichier_de_la_traduction;
+	caractère *action, *argument;
+	caractère *chemin_d_entree, *chemin_de_la_sortie;
+	caractère constant *suffixe = ".fr";
 
 	entier succes_de_la_traduction;
-	caractère* chemin_de_la_traduction;
+	caractère *chemin_de_la_traduction;
 
 	entier succes_de_la_compilation;
 
 	si (argc == 1) {
-		retourner 0;
+		retourner ccdille_utilisation();
 	}
 
-	pour (i = 1; i < (taille_t)argc; ++i) {
-		chemin_du_fichier = argv[i];
+	action = argv[1];
+	si (strcmp(action, "traduire") != 0 && strcmp(action, "construire") != 0) {
+		retourner ccdille_utilisation();
+	}
 
-		si (strcmp(&chemin_du_fichier[strlen(chemin_du_fichier)-strlen(suffixe)], suffixe) != 0) {
-			fprintf(stderr, "Type de fichier non supporté %s\n", chemin_du_fichier);
+	chemin_de_la_sortie = NUL;
+
+	pour (i = 2; i < (taille_t)argc; ++i) {
+		argument = argv[i];
+
+		si (argument[0] == '-') {
+			si (strcmp(argument, "-o") == 0) {
+				i++;
+				chemin_de_la_sortie = argv[i];
+			} sinon {
+				printf("Option non reconnue: %s\n", argument);
+				retourner 1;
+			}
+			continuer;
+		}
+		chemin_d_entree = argument;
+
+		si (strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(suffixe)], suffixe) != 0) {
+			fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
 			retourner 1;
+		}
+
+		/* définir le nom du fichier traduit qui sera produit */
+		si (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NUL) {
+			chemin_de_la_traduction = malloc((strlen(chemin_de_la_sortie) + 1) * taille de(caractère));
+			memcpy(chemin_de_la_traduction, chemin_de_la_sortie, strlen(chemin_de_la_sortie) + 1);
+		} sinon {
+			chemin_de_la_traduction = malloc(strlen(chemin_d_entree) * taille de(caractère));
+			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree));
+			chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
 		}
 
 		/* J4OUVRE */
-		fichier = fopen(chemin_du_fichier, "r");
-		si (fichier == NUL) {
-			fprintf(stderr, "Le fichier %s n'a pas pu etre ouvert\n", chemin_du_fichier);
+		fichier_d_entree = fopen(chemin_d_entree, "r");
+		si (fichier_d_entree == NUL) {
+			fprintf(stderr, "Le fichier %s n'a pas pu être ouvert\n", chemin_d_entree);
 			retourner 1;
 		}
 
-		/* set the name of the fichier to create */
-		chemin_de_la_traduction = malloc(strlen(chemin_du_fichier) * taille de(caractère));
-		memcpy(chemin_de_la_traduction, chemin_du_fichier, strlen(chemin_du_fichier));
-		chemin_de_la_traduction[strlen(chemin_du_fichier)-3] = '\0';
-
-		/* create the fichier to write in */
-		temporaire = fopen(chemin_de_la_traduction, "w");
-		si (temporaire == NUL) {
+		/* ouvrir le fichier en écriture */
+		fichier_de_la_traduction = fopen(chemin_de_la_traduction, "w");
+		si (fichier_de_la_traduction == NUL) {
 			fprintf(stderr, "Failed to create a new fichier.\n");
 			retourner 8;
 		}
 
 		/* read words from the fichier */
-		succes_de_la_traduction = ccdille_traduire_fichier(fichier, temporaire);
+		succes_de_la_traduction = ccdille_traduire_fichier(fichier_d_entree, fichier_de_la_traduction);
 		si (succes_de_la_traduction != 0) {
 			retourner succes_de_la_traduction;
 		}
 
 		/* JE FERME */
-		fclose(fichier);
-		fclose(temporaire);
+		fclose(fichier_d_entree);
+		fclose(fichier_de_la_traduction);
 	}
 
-	succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", "a.sortie", chemin_de_la_traduction, NUL);
-
+	succes_de_la_compilation = 0;
+	si (strcmp(action, "construire") == 0) {
+		si (chemin_de_la_sortie == NUL) {
+			chemin_de_la_sortie = "a.sortie";
+		}
+		succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NUL);
+	}
 	free(chemin_de_la_traduction);
 
 	retourner succes_de_la_compilation;
+}
+
+entier ccdille_utilisation() {
+	printf("Utilisation : ç traduire|construire [-o sortie.out] [entrée...]\n");
+	retourner 1;
 }
 
 entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie) {

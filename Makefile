@@ -6,7 +6,7 @@ PREFIX = /usr/local
 ç: ç.c
 	$(CC) $(CFLAGS) -o ç ç.c
 ç.c: ç.c.fr
-	./ç ç.c.fr
+	./ç traduire ç.c.fr
 
 all: ç
 debug: ç.c

@@ -10,9 +10,9 @@ Coréalisé par DiestVanMaitre_culain et Emersion.
 
 ## Compilation
 
-Pour compiler vos programmes, utiliser la commande suivante
+Pour compiler vos programmes, utiliser la commande suivante :
 ```shell
-ç mon_programme.c.fr
+ç construire mon_programme.c.fr
 ```
 
 ## L'Algorithme D'Euclide

@@ -19,6 +19,7 @@ struct mot_cle_francais_t {
   char* traduction;
 };
 
+int ccdille_utilisation();
 int ccdille_traduire_fichier(FILE* entree, FILE* sortie);
 int ccdille_traduire_mot(char* mot, size_t* longueur);
 size_t ccdille_minimum(size_t a, size_t b);
