@@ -22,12 +22,13 @@ int main(int argc, char* argv[]) {
 		return ccdille_utilisation();
 	}
 
+	chemin_de_la_traduction = NULL;
 	chemin_de_la_sortie = NULL;
 
 	for (i = 2; i < (size_t)argc; ++i) {
 		argument = argv[i];
 
-		if (argument[0] == '-') {
+		if (argument[0] == '-' && strlen(argument) > 1) {
 			if (strcmp(argument, "-o") == 0) {
 				i++;
 				chemin_de_la_sortie = argv[i];
@@ -39,33 +40,43 @@ int main(int argc, char* argv[]) {
 		}
 		chemin_d_entree = argument;
 
-		if (strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(suffixe)], suffixe) != 0) {
-			fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
-			return 1;
-		}
-
-		/* définir le nom du fichier traduit qui sera produit */
-		if (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NULL) {
-			chemin_de_la_traduction = malloc((strlen(chemin_de_la_sortie) + 1) * sizeof(char));
-			memcpy(chemin_de_la_traduction, chemin_de_la_sortie, strlen(chemin_de_la_sortie) + 1);
+		/* J4OUVRE */
+		if (strcmp(chemin_d_entree, "-") == 0) {
+			fichier_d_entree = stdin;
 		} else {
+			if (strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(suffixe)], suffixe) != 0) {
+				fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
+				return 1;
+			}
+
+			/* définir le nom du fichier traduit qui sera produit */
+			free(chemin_de_la_traduction);
 			chemin_de_la_traduction = malloc(strlen(chemin_d_entree) * sizeof(char));
 			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree));
 			chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
+
+			fichier_d_entree = fopen(chemin_d_entree, "r");
+			if (fichier_d_entree == NULL) {
+				fprintf(stderr, "Le fichier %s n'a pas pu être ouvert\n", chemin_d_entree);
+				return 1;
+			}
 		}
 
-		/* J4OUVRE */
-		fichier_d_entree = fopen(chemin_d_entree, "r");
-		if (fichier_d_entree == NULL) {
-			fprintf(stderr, "Le fichier %s n'a pas pu être ouvert\n", chemin_d_entree);
-			return 1;
+		if (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NULL) {
+			free(chemin_de_la_traduction);
+			chemin_de_la_traduction = malloc((strlen(chemin_de_la_sortie) + 1) * sizeof(char));
+			memcpy(chemin_de_la_traduction, chemin_de_la_sortie, strlen(chemin_de_la_sortie) + 1);
 		}
 
-		/* ouvrir le fichier en écriture */
-		fichier_de_la_traduction = fopen(chemin_de_la_traduction, "w");
-		if (fichier_de_la_traduction == NULL) {
-			fprintf(stderr, "Failed to create a new fichier.\n");
-			return 8;
+		/* ouvrir le fichier où la traduction sera écrite */
+		if (chemin_de_la_traduction == NULL || strcmp(chemin_de_la_traduction, "-") == 0) {
+			fichier_de_la_traduction = stdout;
+		} else {
+			fichier_de_la_traduction = fopen(chemin_de_la_traduction, "w");
+			if (fichier_de_la_traduction == NULL) {
+				fprintf(stderr, "Failed to create a new fichier.\n");
+				return 8;
+			}
 		}
 
 		/* read words from the fichier */
