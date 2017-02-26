@@ -7,9 +7,11 @@ PREFIX = /usr/local
 	$(CC) $(CFLAGS) -o ç ç.c
 ç.c: ç.c.fr
 	./ç traduire ç.c.fr
+ç.h: ç.h.fr
+	./ç traduire ç.h.fr
 
 all: ç
-debug: ç.c
+debug: ç.c ç.h
 	$(CC) $(DBGFLAGS) -o ç ç.c
 clean:
 	rm -rf ç

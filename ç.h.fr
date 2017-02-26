@@ -1,31 +1,31 @@
-#ifndef CCDILLE_H
-#define CCDILLE_H
+#si non défini CCDILLE_H
+#définir CCDILLE_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#inclure <entrées et sorties standard.en-tête>
+#inclure <bibliothèque standard.en-tête>
+#inclure <chaîne de caractères.en-tête>
+#inclure <unistd.h>
 
-#define TAILLE_DU_TAMPON 1024
+#définir TAILLE_DU_TAMPON 1024
 
-enum ccdille_comparaison_de_chaine_de_caractere_resultat {
+énumération ccdille_comparaison_de_chaine_de_caractere_resultat {
   CCDILLE_PAS_DE_CORRESPONDANCE,
   CCDILLE_CORRESPONDANCE,
   CCDILLE_PREFIXE
 };
 
-struct mot_cle_francais_t {
-  char *mot;
-  char *traduction;
+structure mot_cle_francais_t {
+  caractère *mot;
+  caractère *traduction;
 };
 
-int ccdille_utilisation();
-int ccdille_traduire_fichier(FILE* entree, FILE* sortie);
-int ccdille_traduire_mot(char* mot, size_t* longueur);
-size_t ccdille_minimum(size_t a, size_t b);
-enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const *a, size_t longueur_de_a, char const *b, size_t longueur_de_b);
+entier ccdille_utilisation();
+entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie);
+entier ccdille_traduire_mot(caractère* mot, taille_t* longueur);
+taille_t ccdille_minimum(taille_t a, taille_t b);
+énumération ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(caractère constant *a, taille_t longueur_de_a, caractère constant *b, size_t longueur_de_b);
 
-struct mot_cle_francais_t mot_cles_francais[] = {
+structure mot_cle_francais_t mot_cles_francais[] = {
   {"#définir", "#define"},
   {"#retirer la définition", "#undef"},
   {"#inclure", "#include"},
@@ -106,4 +106,4 @@ struct mot_cle_francais_t mot_cles_francais[] = {
   {"pricipal", "main"}
 };
 
-#endif
+#fin si
