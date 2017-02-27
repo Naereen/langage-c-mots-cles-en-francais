@@ -82,6 +82,8 @@ structure mot_cle_francais mot_cles_c[] = {
   {"FICHIER", "FILE"},
   {"NUL", "NULL"},
 
+  // Librairie standard C
+  // https://en.wikipedia.org/wiki/C_standard_library
   {"<assertion.en-tête>", "<assert.h>"},
   {"<complexe.en-tête>", "<complex.h>"},
   {"<types du langage c.en-tête>", "<ctype.h>"},
