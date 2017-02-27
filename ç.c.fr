@@ -128,7 +128,7 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération 
 	pour (;;) {
 		c = fgetc(entree);
 
-		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == '|' || c == '&' || c == '*' || c == '!' || c == EOF) {
+		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == '|' || c == '&' || c == '*' || c == '!' || c == '=' || c == ':' || c == EOF) {
 			succes_de_la_traduction = ccdille_traduire_mot((caractère*)tampon, &longueur, sens);
 			si (succes_de_la_traduction || c == EOF) {
 				ecrit = fwrite((vide*)tampon, taille de(caractère), longueur, sortie);
