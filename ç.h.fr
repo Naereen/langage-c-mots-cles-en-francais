@@ -20,7 +20,7 @@
   CCDILLE_A_L_ENVERS
 };
 
-structure mot_cle_francais_t {
+structure mot_cle_francais {
   caractère *mot;
   caractère *traduction;
 };
@@ -31,7 +31,7 @@ entier ccdille_traduire_mot(caractère* mot_a_traduire, taille_t* longueur, énu
 taille_t ccdille_minimum(taille_t a, taille_t b);
 énumération ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(caractère constant *a, taille_t longueur_de_a, caractère constant *b, size_t longueur_de_b);
 
-structure mot_cle_francais_t mot_cles_francais[] = {
+structure mot_cle_francais mot_cles_c[] = {
   {"#définir", "#define"},
   {"#retirer la définition", "#undef"},
   {"#inclure", "#include"},

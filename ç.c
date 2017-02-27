@@ -162,17 +162,17 @@ int ccdille_traduire_fichier(FILE* entree, FILE* sortie, enum ccdille_sens sens)
 int ccdille_traduire_mot(char* mot_a_traduire, size_t* longueur, enum ccdille_sens sens) {
 	size_t i;
 	enum ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
-	struct mot_cle_francais_t mot_cle_francais;
+	struct mot_cle_francais mot_cle;
 	char *mot, *traduction;
 
-	for (i = 0; i < sizeof(mot_cles_francais)/sizeof(*mot_cles_francais); i++) {
-		mot_cle_francais = mot_cles_francais[i];
+	for (i = 0; i < sizeof(mot_cles_c)/sizeof(*mot_cles_c); i++) {
+		mot_cle = mot_cles_c[i];
 		if (sens == CCDILLE_A_L_ENDROIT) {
-			mot = mot_cle_francais.mot;
-			traduction = mot_cle_francais.traduction;
+			mot = mot_cle.mot;
+			traduction = mot_cle.traduction;
 		} else {
-			mot = mot_cle_francais.traduction;
-			traduction = mot_cle_francais.mot;
+			mot = mot_cle.traduction;
+			traduction = mot_cle.mot;
 		}
 
 		resultat = ccdille_comparaison_de_chaine_de_caractere(mot_a_traduire, *longueur, mot, strlen(mot));

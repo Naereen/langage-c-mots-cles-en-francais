@@ -162,17 +162,17 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération 
 entier ccdille_traduire_mot(caractère* mot_a_traduire, taille_t* longueur, énumération ccdille_sens sens) {
 	taille_t i;
 	énumération ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
-	structure mot_cle_francais_t mot_cle_francais;
+	structure mot_cle_francais mot_cle;
 	caractère *mot, *traduction;
 
-	pour (i = 0; i < taille de(mot_cles_francais)/taille de(*mot_cles_francais); i++) {
-		mot_cle_francais = mot_cles_francais[i];
+	pour (i = 0; i < taille de(mot_cles_c)/taille de(*mot_cles_c); i++) {
+		mot_cle = mot_cles_c[i];
 		si (sens == CCDILLE_A_L_ENDROIT) {
-			mot = mot_cle_francais.mot;
-			traduction = mot_cle_francais.traduction;
+			mot = mot_cle.mot;
+			traduction = mot_cle.traduction;
 		} sinon {
-			mot = mot_cle_francais.traduction;
-			traduction = mot_cle_francais.mot;
+			mot = mot_cle.traduction;
+			traduction = mot_cle.mot;
 		}
 
 		resultat = ccdille_comparaison_de_chaine_de_caractere(mot_a_traduire, *longueur, mot, strlen(mot));
