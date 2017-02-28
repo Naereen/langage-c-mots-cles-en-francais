@@ -29,6 +29,7 @@ int ccdille_utilisation();
 int ccdille_traduire_fichier(FILE* entree, FILE* sortie, enum ccdille_sens sens);
 int ccdille_traduire_mot(char* mot_a_traduire, size_t* longueur, enum ccdille_sens sens);
 size_t ccdille_minimum(size_t a, size_t b);
+int ccdille_dernier_index_de(char* mot, char c);
 enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const *a, size_t longueur_de_a, char const *b, size_t longueur_de_b);
 
 struct mot_cle_francais mot_cles_c[] = {
@@ -82,6 +83,7 @@ struct mot_cle_francais mot_cles_c[] = {
   {"FICHIER", "FILE"},
   {"NUL", "NULL"},
 
+  /* Librairie standard C - https://en.wikipedia.org/wiki/C_standard_library */
   {"<assertion.en-tête>", "<assert.h>"},
   {"<complexe.en-tête>", "<complex.h>"},
   {"<types du langage c.en-tête>", "<ctype.h>"},

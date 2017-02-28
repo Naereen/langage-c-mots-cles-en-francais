@@ -32,4 +32,7 @@
 # Debug files
 *.dSYM/
 
+*.sortie
+
 ç
+ç.debug

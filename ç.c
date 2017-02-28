@@ -6,6 +6,8 @@ int main(int argc, char* argv[]) {
 	FILE *fichier_d_entree, *fichier_de_la_traduction;
 	char *action, *argument;
 	char *chemin_d_entree, *chemin_de_la_sortie;
+	int position_de_l_extension;
+	char *extension, *langage, *langage_d_entree;
 
 	int succes_de_la_traduction;
 	char *chemin_de_la_traduction;
@@ -24,6 +26,7 @@ int main(int argc, char* argv[]) {
 
 	chemin_de_la_traduction = NULL;
 	chemin_de_la_sortie = NULL;
+	langage = NULL;
 
 	for (i = 2; i < (size_t)argc; ++i) {
 		argument = argv[i];
@@ -32,6 +35,9 @@ int main(int argc, char* argv[]) {
 			if (strcmp(argument, "-o") == 0) {
 				i++;
 				chemin_de_la_sortie = argv[i];
+			} else if (strcmp(argument, "-l") == 0) {
+				i++;
+				langage = argv[i];
 			} else if (strcmp(argument, "-1") == 0) {
 				if (strcmp(action, "traduire") != 0) {
 					fprintf(stderr, "Impossible d'utiliser l'option -1 sans l'action traduire\n");
@@ -45,13 +51,18 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 		chemin_d_entree = argument;
+		langage_d_entree = langage;
 
 		/* J4OUVRE */
 		if (strcmp(chemin_d_entree, "-") == 0) {
 			fichier_d_entree = stdin;
+			if (langage_d_entree == NULL) {
+				fprintf(stderr, "Langage d'entrée non spécifié, C est utilisé par défaut\n");
+				langage_d_entree = "c";
+			}
 		} else {
 			if (sens == CCDILLE_A_L_ENDROIT && strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(EXTENSION_DE_FICHIER)], EXTENSION_DE_FICHIER) != 0) {
-				fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
+				fprintf(stderr, "Type de fichier non supporté %s (un fichier de type %s était attendu)\n", chemin_d_entree, EXTENSION_DE_FICHIER);
 				return 1;
 			}
 
@@ -60,9 +71,31 @@ int main(int argc, char* argv[]) {
 			chemin_de_la_traduction = malloc((strlen(chemin_d_entree) + strlen(EXTENSION_DE_FICHIER) + 1) * sizeof(char));
 			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree) + 1);
 			if (sens == CCDILLE_A_L_ENDROIT) {
-				chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
+				chemin_de_la_traduction[strlen(chemin_de_la_traduction)-strlen(EXTENSION_DE_FICHIER)] = '\0';
 			} else {
 				strcat(chemin_de_la_traduction, EXTENSION_DE_FICHIER);
+			}
+
+			/* vérifier l'extension du fichier source */
+			extension = "";
+			if (sens == CCDILLE_A_L_ENDROIT) {
+				position_de_l_extension = ccdille_dernier_index_de(chemin_de_la_traduction, '.');
+				if (position_de_l_extension >= 0) {
+					extension = &chemin_de_la_traduction[position_de_l_extension+1];
+				}
+			} else {
+				position_de_l_extension = ccdille_dernier_index_de(chemin_d_entree, '.');
+				if (position_de_l_extension >= 0) {
+					extension = &chemin_d_entree[position_de_l_extension+1];
+				}
+			}
+			if (langage_d_entree == NULL) {
+				if (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
+					langage_d_entree = "c";
+				} else {
+					fprintf(stderr, "Extension %s non supportée\n", extension);
+					return 1;
+				}
 			}
 
 			fichier_d_entree = fopen(chemin_d_entree, "r");
@@ -70,6 +103,11 @@ int main(int argc, char* argv[]) {
 				fprintf(stderr, "Le fichier %s n'a pas pu être ouvert\n", chemin_d_entree);
 				return 1;
 			}
+		}
+
+		if (strcmp(langage_d_entree, "c") != 0) {
+			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
+			return 1;
 		}
 
 		if (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NULL) {
@@ -113,7 +151,7 @@ int main(int argc, char* argv[]) {
 }
 
 int ccdille_utilisation() {
-	printf("Utilisation : ç traduire|construire [-1] [-o sortie.out] [entrée...]\n");
+	printf("Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
 	return 1;
 }
 
@@ -194,6 +232,17 @@ int ccdille_traduire_mot(char* mot_a_traduire, size_t* longueur, enum ccdille_se
 
 size_t ccdille_min(size_t a, size_t b) {
 	return a <= b ? a : b;
+}
+
+int ccdille_dernier_index_de(char* mot, char c) {
+	int i = strlen(mot) - 1;
+	while (i >= 0) {
+		if (mot[i] == c) {
+			return i;
+		}
+		i--;
+	}
+	return -1;
 }
 
 enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const* a, size_t taille_de_a, char const* b, size_t taille_de_b) {

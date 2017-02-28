@@ -6,6 +6,8 @@ entier principale(entier argc, caractère* argv[]) {
 	FICHIER *fichier_d_entree, *fichier_de_la_traduction;
 	caractère *action, *argument;
 	caractère *chemin_d_entree, *chemin_de_la_sortie;
+	entier position_de_l_extension;
+	caractère *extension, *langage, *langage_d_entree;
 
 	entier succes_de_la_traduction;
 	caractère *chemin_de_la_traduction;
@@ -24,6 +26,7 @@ entier principale(entier argc, caractère* argv[]) {
 
 	chemin_de_la_traduction = NUL;
 	chemin_de_la_sortie = NUL;
+	langage = NUL;
 
 	pour (i = 2; i < (taille_t)argc; ++i) {
 		argument = argv[i];
@@ -32,6 +35,9 @@ entier principale(entier argc, caractère* argv[]) {
 			si (strcmp(argument, "-o") == 0) {
 				i++;
 				chemin_de_la_sortie = argv[i];
+			} sinon si (strcmp(argument, "-l") == 0) {
+				i++;
+				langage = argv[i];
 			} sinon si (strcmp(argument, "-1") == 0) {
 				si (strcmp(action, "traduire") != 0) {
 					fprintf(stderr, "Impossible d'utiliser l'option -1 sans l'action traduire\n");
@@ -45,13 +51,18 @@ entier principale(entier argc, caractère* argv[]) {
 			continuer;
 		}
 		chemin_d_entree = argument;
+		langage_d_entree = langage;
 
 		/* J4OUVRE */
 		si (strcmp(chemin_d_entree, "-") == 0) {
 			fichier_d_entree = stdin;
+			si (langage_d_entree == NUL) {
+				fprintf(stderr, "Langage d'entrée non spécifié, C est utilisé par défaut\n");
+				langage_d_entree = "c";
+			}
 		} sinon {
 			si (sens == CCDILLE_A_L_ENDROIT && strcmp(&chemin_d_entree[strlen(chemin_d_entree)-strlen(EXTENSION_DE_FICHIER)], EXTENSION_DE_FICHIER) != 0) {
-				fprintf(stderr, "Type de fichier non supporté %s\n", chemin_d_entree);
+				fprintf(stderr, "Type de fichier non supporté %s (un fichier de type %s était attendu)\n", chemin_d_entree, EXTENSION_DE_FICHIER);
 				retourner 1;
 			}
 
@@ -60,9 +71,32 @@ entier principale(entier argc, caractère* argv[]) {
 			chemin_de_la_traduction = malloc((strlen(chemin_d_entree) + strlen(EXTENSION_DE_FICHIER) + 1) * taille de(caractère));
 			memcpy(chemin_de_la_traduction, chemin_d_entree, strlen(chemin_d_entree) + 1);
 			si (sens == CCDILLE_A_L_ENDROIT) {
-				chemin_de_la_traduction[strlen(chemin_d_entree)-3] = '\0';
+				chemin_de_la_traduction[strlen(chemin_de_la_traduction)-strlen(EXTENSION_DE_FICHIER)] = '\0';
 			} sinon {
 				strcat(chemin_de_la_traduction, EXTENSION_DE_FICHIER);
+			}
+
+			/* déterminer l'extension du fichier source */
+			extension = "";
+			si (sens == CCDILLE_A_L_ENDROIT) {
+				position_de_l_extension = ccdille_dernier_index_de(chemin_de_la_traduction, '.');
+				si (position_de_l_extension >= 0) {
+					extension = &chemin_de_la_traduction[position_de_l_extension+1];
+				}
+			} sinon {
+				position_de_l_extension = ccdille_dernier_index_de(chemin_d_entree, '.');
+				si (position_de_l_extension >= 0) {
+					extension = &chemin_d_entree[position_de_l_extension+1];
+				}
+			}
+			/* auto-détection du langage d'entrée en fonction de l'extension du fichier */
+			si (langage_d_entree == NUL) {
+				si (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
+					langage_d_entree = "c";
+				} sinon {
+					fprintf(stderr, "Extension %s non supportée\n", extension);
+					retourner 1;
+				}
 			}
 
 			fichier_d_entree = fopen(chemin_d_entree, "r");
@@ -72,6 +106,13 @@ entier principale(entier argc, caractère* argv[]) {
 			}
 		}
 
+		/* seul C est supporté pour le moment */
+		si (strcmp(langage_d_entree, "c") != 0) {
+			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
+			retourner 1;
+		}
+
+		/* si on traduit sans compiler, écrire la traduction dans le fichier de sortie, si spécifié */
 		si (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NUL) {
 			free(chemin_de_la_traduction);
 			chemin_de_la_traduction = malloc((strlen(chemin_de_la_sortie) + 1) * taille de(caractère));
@@ -113,7 +154,7 @@ entier principale(entier argc, caractère* argv[]) {
 }
 
 entier ccdille_utilisation() {
-	printf("Utilisation : ç traduire|construire [-1] [-o sortie.out] [entrée...]\n");
+	printf("Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
 	retourner 1;
 }
 
@@ -194,6 +235,17 @@ entier ccdille_traduire_mot(caractère* mot_a_traduire, taille_t* longueur, énu
 
 taille_t ccdille_min(taille_t a, taille_t b) {
 	retourner a <= b ? a : b;
+}
+
+entier ccdille_dernier_index_de(caractère* mot, caractère c) {
+	entier i = strlen(mot) - 1;
+	tant que (i >= 0) {
+		si (mot[i] == c) {
+			retourner i;
+		}
+		i--;
+	}
+	retourner -1;
 }
 
 énumération ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(caractère constant* a, taille_t taille_de_a, caractère constant* b, taille_t taille_de_b) {
