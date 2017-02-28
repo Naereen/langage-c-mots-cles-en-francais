@@ -26,6 +26,9 @@ Pour produire une version de déboggage `ç.debug` :
 make debug
 ```
 
+* Les utilisateurs de Archlinux pourront utiliser la paquet AUR : `pacaur -S ccdille-git`
+* Les utilisateurs de Atom purront installer la coloration syntaxique `language-c-fr`
+
 ## Exemples d'utilisation
 
 ### Compilation
