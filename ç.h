@@ -32,7 +32,9 @@ size_t ccdille_minimum(size_t a, size_t b);
 int ccdille_dernier_index_de(char* mot, char c);
 enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const *a, size_t longueur_de_a, char const *b, size_t longueur_de_b);
 
+/* Langage C */
 struct mot_cle_francais mot_cles_c[] = {
+  /* Directives préprocesseur */
   {"#définir", "#define"},
   {"#retirer la définition", "#undef"},
   {"#inclure", "#include"},
@@ -45,6 +47,7 @@ struct mot_cle_francais mot_cles_c[] = {
   {"#pragmatique", "#pragma"},
   {"#erreur", "#error"},
 
+  /* Mot-clefs du langage */
   {"automatique", "auto"},
   {"casser", "break"},
   {"cas", "case"},
@@ -83,10 +86,10 @@ struct mot_cle_francais mot_cles_c[] = {
   {"FICHIER", "FILE"},
   {"NUL", "NULL"},
 
-  /* Librairie standard C - https://en.wikipedia.org/wiki/C_standard_library */
+  /* Librairie standard - https://en.wikipedia.org/wiki/C_standard_library */
   {"<assertion.en-tête>", "<assert.h>"},
   {"<complexe.en-tête>", "<complex.h>"},
-  {"<types du langage c.en-tête>", "<ctype.h>"},
+  {"<types des caractères.en-tête>", "<ctype.h>"},
   {"<numéro d'erreur.en-tête>", "<errno.h>"},
   {"<environnement en virgule flottante.en-tête>", "<fenv.h>"},
   {"<flottant.en-tête>", "<float.h>"},
@@ -108,10 +111,70 @@ struct mot_cle_francais mot_cles_c[] = {
   {"<processus.en-tête>", "<threads.h>"},
   {"<temps.en-tête>", "<time.h>"},
   {"<caractères larges.en-tête>", "<wchar.h>"},
-  {"<types des caractères larges.en-tête>", "<wctypes.h>"},
+  {"<types des caractères larges.en-tête>", "<wctype.h>"},
 
   {"principale", "main"},
-  {"pricipal", "main"}
+  {"pricipal", "main"},
+
+  /* Librairie POSIX - https://en.wikipedia.org/wiki/C_POSIX_library */
+  {"<entrées et sorties asynchrones.en-tête>", "<aio.h>"},
+  {"<arpa/internet.en-tête>", "<arpa/inet.h>"},
+  {"<cpio.en-tête>", "<cpio.h>"}, /* TODO */
+  {"<entité de répertoire.en-tête>", "<dirent.h>"},
+  {"<liaison dynamique.en-tête>", "<dlfcn.h>"},
+  {"<manipulation de descripteurs de fichier.en-tête>", "<fcntl.h>"},
+  {"<formattage de messages.en-tête>", "<fmtmsg.h>"},
+  {"<correspondance de noms de fichiers.en-tête>", "<fnmatch.h>"},
+  {"<parcours d'arbres de fichiers.en-tête>", "<ftw.h>"},
+  {"<correspondance de motifs.en-tête>", "<glob.h>"},
+  {"<groupe d'utilisateur.en-tête>", "<grp.h>"},
+  {"<conversion d'encodage de caractères.en-tête>", "<iconv.h>"},
+  {"<informations de langues.en-tête>", "<langinfo.h>"},
+  {"<manipulation de chemins de fichiers.en-tête>", "<libgen.h>"},
+  {"<monétaire.en-tête>", "<monetary.h>"},
+  {"<file de messages.en-tête>", "<mqueue.h>"},
+  {"<ndbm.en-tête>", "<ndbm.h>"}, /* TODO */
+  {"<réseau/interfaces.en-tête>", "<net/if.h>"},
+  {"<base de données réseau.en-tête>", "<netdb.h>"},
+  {"<réseau internet/in.en-tête>", "<netinet/in.h>"}, /* TODO */
+  {"<réseau internet/tcp.en-tête>", "<netinet/tcp.h>"},
+  {"<types d'internationalisation.en-tête>", "<nl_types.h>"},
+  {"<sondage.en-tête>", "<poll.h>"},
+  {"<fil posix.en-tête>", "<pthread.h>"},
+  {"<mot de passe.en-tête>", "<pwd.h>"},
+  {"<expression régulière.en-tête>", "<regex.h>"},
+  {"<plannification.en-tête>", "<sched.h>"},
+  {"<recherche.en-tête>", "<search.h>"},
+  {"<sémaphore.en-tête>", "<semaphore.h>"},
+  {"<pondre.en-tête>", "<spawn.h>"},
+  {"<chaîne de caractères sensible à la casse.en-tête>", "<strings.h>"},
+  {"<options de flux.en-tête>", "<stropts.h>"},
+  {"<système/communication inter-processus.en-tête>", "<sys/ipc.h>"},
+  {"<système/gestion de la mémoire.en-tête>", "<sys/mman.h>"},
+  {"<système/message.en-tête>", "<sys/msg.h>"},
+  {"<système/ressource.en-tête>", "<sys/resource.h>"},
+  {"<système/sélection.en-tête>", "<sys/select.h>"},
+  {"<système/sémaphore.en-tête>", "<sys/sem.h>"},
+  {"<système/mémoire partagée.en-tête>", "<sys/shm.h>"},
+  {"<système/chaussette.en-tête>", "<sys/socket.h>"},
+  {"<système/statistique.en-tête>", "<sys/stat.h>"},
+  {"<système/statistique for système de fichiers virtuel.en-tête>", "<sys/statvfs.h>"},
+  {"<système/temps.en-tête>", "<sys/time.h>"},
+  {"<système/temps des fichiers.en-tête>", "<sys/times.h>"},
+  {"<système/types.en-tête>", "<sys/types.h>"},
+  {"<système/entrées et sorties vectorielles.en-tête>", "<sys/uio.h>"},
+  {"<système/chaussette unix.en-tête>", "<sys/un.h>"},
+  {"<système/informations.en-tête>", "<sys/utsname.h>"}, /* TODO */
+  {"<système/attente.en-tête>", "<sys/wait.h>"},
+  {"<journal système.en-tête>", "<syslog.h>"},
+  {"<tar.en-tête>", "<tar.h>"}, /* TODO */
+  {"<entrées et sorties du terminal.en-tête>", "<termios.h>"},
+  {"<traçage.en-tête>", "<trace.h>"}, /* déprécié */
+  {"<limitation de ressource.en-tête>", "<ulimit.h>"}, /* déprécié */
+  {"<bibliothèque posix.en-tête>", "<unistd.h>"},
+  {"<temps des nœuds d'index.en-tête>", "<utime.h>"},
+  {"<utmpx.en-tête>", "<utmpx.h>"}, /* TODO */
+  {"<expansion de mots.en-tête>", "<wordexp.h>"}
 };
 
 #endif
