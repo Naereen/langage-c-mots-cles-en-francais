@@ -1,3 +1,5 @@
+/* Ce fichier a été généré par ç, ne pas l'éditer */
+
 #ifndef CCDILLE_H
 #define CCDILLE_H
 
@@ -8,6 +10,7 @@
 
 #define TAILLE_DU_TAMPON 1024
 #define EXTENSION_DE_FICHIER ".fr"
+#define EN_TETE_DE_TRADUCTION "Ce fichier a été généré par ç, ne pas l'éditer"
 
 enum ccdille_comparaison_de_chaine_de_caractere_resultat {
   CCDILLE_PAS_DE_CORRESPONDANCE,

@@ -9,7 +9,7 @@ entier principale(entier argc, caractère* argv[]) {
 	entier position_de_l_extension;
 	caractère *extension, *langage, *langage_d_entree;
 
-	entier succes_de_la_traduction;
+	entier succes_de_la_traduction, ecrit;
 	caractère *chemin_de_la_traduction;
 	énumération ccdille_sens sens;
 
@@ -128,6 +128,14 @@ entier principale(entier argc, caractère* argv[]) {
 			si (fichier_de_la_traduction == NUL) {
 				fprintf(stderr, "Failed to create a new fichier.\n");
 				retourner 8;
+			}
+		}
+
+		/* écrire l'en-tête de traduction si nécessaire */
+		si (sens == CCDILLE_A_L_ENDROIT) {
+			ecrit = fprintf(fichier_de_la_traduction, "/* %s */\n\n", EN_TETE_DE_TRADUCTION);
+			si (ecrit < 0) {
+				retourner 9;
 			}
 		}
 

@@ -1,3 +1,5 @@
+/* Ce fichier a été généré par ç, ne pas l'éditer */
+
 #include "ç.h"
 
 int main(int argc, char* argv[]) {
@@ -9,7 +11,7 @@ int main(int argc, char* argv[]) {
 	int position_de_l_extension;
 	char *extension, *langage, *langage_d_entree;
 
-	int succes_de_la_traduction;
+	int succes_de_la_traduction, ecrit;
 	char *chemin_de_la_traduction;
 	enum ccdille_sens sens;
 
@@ -128,6 +130,14 @@ int main(int argc, char* argv[]) {
 			if (fichier_de_la_traduction == NULL) {
 				fprintf(stderr, "Failed to create a new fichier.\n");
 				return 8;
+			}
+		}
+
+		/* écrire l'en-tête de traduction if nécessaire */
+		if (sens == CCDILLE_A_L_ENDROIT) {
+			ecrit = fprintf(fichier_de_la_traduction, "/* %s */\n\n", EN_TETE_DE_TRADUCTION);
+			if (ecrit < 0) {
+				return 9;
 			}
 		}
 
