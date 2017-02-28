@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 				strcat(chemin_de_la_traduction, EXTENSION_DE_FICHIER);
 			}
 
-			/* vérifier l'extension du fichier source */
+			/* déterminer l'extension du fichier source */
 			extension = "";
 			if (sens == CCDILLE_A_L_ENDROIT) {
 				position_de_l_extension = ccdille_dernier_index_de(chemin_de_la_traduction, '.');
@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
 					extension = &chemin_d_entree[position_de_l_extension+1];
 				}
 			}
+			/* auto-détection du langage d'entrée en fonction de l'extension du fichier */
 			if (langage_d_entree == NULL) {
 				if (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
 					langage_d_entree = "c";
@@ -105,11 +106,13 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
+		/* seul C est supporté for le moment */
 		if (strcmp(langage_d_entree, "c") != 0) {
 			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
 			return 1;
 		}
 
+		/* if on traduit sans compiler, écrire la traduction dans le fichier de sortie, if spécifié */
 		if (strcmp(action, "traduire") == 0 && chemin_de_la_sortie != NULL) {
 			free(chemin_de_la_traduction);
 			chemin_de_la_traduction = malloc((strlen(chemin_de_la_sortie) + 1) * sizeof(char));
@@ -143,7 +146,12 @@ int main(int argc, char* argv[]) {
 		if (chemin_de_la_sortie == NULL) {
 			chemin_de_la_sortie = "a.sortie";
 		}
-		succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NULL);
+		if (strcmp(langage_d_entree, "c") == 0) {
+			succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NULL);
+		} else {
+			fprintf(stderr, "Langage %s non supporté à la compilation\n", langage_d_entree);
+			succes_de_la_compilation = 1;
+		}
 	}
 	free(chemin_de_la_traduction);
 
@@ -151,7 +159,7 @@ int main(int argc, char* argv[]) {
 }
 
 int ccdille_utilisation() {
-	printf("Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
+	fprintf(stderr, "Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
 	return 1;
 }
 

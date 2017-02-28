@@ -146,7 +146,12 @@ entier principale(entier argc, caractère* argv[]) {
 		si (chemin_de_la_sortie == NUL) {
 			chemin_de_la_sortie = "a.sortie";
 		}
-		succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NUL);
+		si (strcmp(langage_d_entree, "c") == 0) {
+			succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NUL);
+		} sinon {
+			fprintf(stderr, "Langage %s non supporté à la compilation\n", langage_d_entree);
+			succes_de_la_compilation = 1;
+		}
 	}
 	free(chemin_de_la_traduction);
 
@@ -154,7 +159,7 @@ entier principale(entier argc, caractère* argv[]) {
 }
 
 entier ccdille_utilisation() {
-	printf("Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
+	fprintf(stderr, "Utilisation : ç traduire|construire [-1] [-l langage] [-o a.sortie] [entrée...]\n");
 	retourner 1;
 }
 
