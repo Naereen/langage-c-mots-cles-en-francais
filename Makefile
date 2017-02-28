@@ -13,10 +13,12 @@ PREFIX = /usr/local
 all: ç
 debug: ç.c ç.h
 	$(CC) $(DBGFLAGS) -o ç.debug ç.c
+bootstrap:
+	$(MAKE) -o ç.c -o ç.h
 clean:
 	rm -rf ç ç.debug
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	install -m 0755 ç $(DESTDIR)$(PREFIX)/bin
 
-.PHONY: clean all debug install
+.PHONY: clean all debug bootstrap install

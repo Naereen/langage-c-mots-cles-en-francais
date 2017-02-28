@@ -1,4 +1,4 @@
-# ccdille
+# ç
 
 Une version sava de frenchsyntaxe.h.
 
@@ -6,16 +6,36 @@ C'est un précompilateur qui traduit le code en français vers du code en C.
 
 Coréalisé par DiestVanMaitre_culain et Emersion.
 
-# Exemples d'utilisation
+## Installation
 
-## Compilation
+Comme `ç` utilise lui-même `ç` pour se compiler, il faut construire `ç` à partir
+des sources C, et non des sources C.fr :
+
+```shell
+make bootstrap
+```
+
+Une fois `ç` compilé, on pourra le modifier et le recompiler à partir des
+sources C.fr :
+```shell
+make
+```
+
+Pour produire une version de déboggage `ç.debug` :
+```shell
+make debug
+```
+
+## Exemples d'utilisation
+
+### Compilation
 
 Pour compiler vos programmes, utiliser la commande suivante :
 ```shell
 ç construire mon_programme.c.fr
 ```
 
-## L'Algorithme D'Euclide
+### L'Algorithme D'Euclide
 
 ```c
 #inclure <entrées et sorties standard.en-tête>
