@@ -11,7 +11,7 @@ entier principale(entier argc, caractère* argv[]) {
 
 	entier succes_de_la_traduction;
 	caractère *chemin_de_la_traduction;
-	énumération ccdille_sens sens = CCDILLE_A_L_ENDROIT;
+	énumération ccdille_sens sens;
 
 	entier succes_de_la_compilation;
 
@@ -27,6 +27,7 @@ entier principale(entier argc, caractère* argv[]) {
 	chemin_de_la_traduction = NUL;
 	chemin_de_la_sortie = NUL;
 	langage = NUL;
+	sens = CCDILLE_A_L_ENDROIT;
 
 	pour (i = 2; i < (taille_t)argc; ++i) {
 		argument = argv[i];

@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 
 	int succes_de_la_traduction;
 	char *chemin_de_la_traduction;
-	enum ccdille_sens sens = CCDILLE_A_L_ENDROIT;
+	enum ccdille_sens sens;
 
 	int succes_de_la_compilation;
 
@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
 	chemin_de_la_traduction = NULL;
 	chemin_de_la_sortie = NULL;
 	langage = NULL;
+	sens = CCDILLE_A_L_ENDROIT;
 
 	for (i = 2; i < (size_t)argc; ++i) {
 		argument = argv[i];
