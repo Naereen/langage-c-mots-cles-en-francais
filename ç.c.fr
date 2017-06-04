@@ -11,7 +11,10 @@ entier principale(entier argc, caractère* argv[]) {
 
 	entier succes_de_la_traduction, ecrit;
 	caractère *chemin_de_la_traduction;
+	structure mot_cle_francais *mot_cles;
+	taille_t mot_cles_taille;
 	énumération ccdille_sens sens;
+	caractère *debut_commentaire, *fin_commentaire;
 
 	entier succes_de_la_compilation;
 
@@ -94,6 +97,8 @@ entier principale(entier argc, caractère* argv[]) {
 			si (langage_d_entree == NUL) {
 				si (strcmp(extension, "c") == 0 || strcmp(extension, "h") == 0) {
 					langage_d_entree = "c";
+				} sinon si (strcmp(extension, "ml") == 0 || strcmp(extension, "mli") == 0) {
+					langage_d_entree = "ml";
 				} sinon {
 					fprintf(stderr, "Extension %s non supportée\n", extension);
 					retourner 1;
@@ -107,8 +112,18 @@ entier principale(entier argc, caractère* argv[]) {
 			}
 		}
 
-		/* seul C est supporté pour le moment */
-		si (strcmp(langage_d_entree, "c") != 0) {
+		/* seuls C et OCaml sont supportés pour le moment */
+		si (strcmp(langage_d_entree, "c") == 0) {
+			mot_cles = mot_cles_c;
+			mot_cles_taille = taille de(mot_cles_c)/taille de(*mot_cles_c);
+			debut_commentaire = (caractère*) DEBUT_COMMENTAIRE_C;
+			fin_commentaire = (caractère*) FIN_COMMENTAIRE_C;
+		} sinon si (strcmp(langage_d_entree, "ml") == 0) {
+			mot_cles = mot_cles_ml;
+			mot_cles_taille = taille de(mot_cles_ml)/taille de(*mot_cles_ml);
+			debut_commentaire = (caractère*) DEBUT_COMMENTAIRE_ML;
+			fin_commentaire = (caractère*) FIN_COMMENTAIRE_ML;
+		} sinon {
 			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
 			retourner 1;
 		}
@@ -133,14 +148,14 @@ entier principale(entier argc, caractère* argv[]) {
 
 		/* écrire l'en-tête de traduction si nécessaire */
 		si (sens == CCDILLE_A_L_ENDROIT) {
-			ecrit = fprintf(fichier_de_la_traduction, "/* %s */\n\n", EN_TETE_DE_TRADUCTION);
+			ecrit = fprintf(fichier_de_la_traduction, "%s%s%s\n\n", debut_commentaire, EN_TETE_DE_TRADUCTION, fin_commentaire);
 			si (ecrit < 0) {
 				retourner 9;
 			}
 		}
 
 		/* read words from the fichier */
-		succes_de_la_traduction = ccdille_traduire_fichier(fichier_d_entree, fichier_de_la_traduction, sens);
+		succes_de_la_traduction = ccdille_traduire_fichier(fichier_d_entree, fichier_de_la_traduction, mot_cles, mot_cles_taille, sens);
 		si (succes_de_la_traduction != 0) {
 			retourner succes_de_la_traduction;
 		}
@@ -157,6 +172,8 @@ entier principale(entier argc, caractère* argv[]) {
 		}
 		si (strcmp(langage_d_entree, "c") == 0) {
 			succes_de_la_compilation = execl("/usr/bin/cc", "cc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NUL);
+		} sinon si (strcmp(langage_d_entree, "ml") == 0) {
+			succes_de_la_compilation = execl("/usr/bin/ocamlc", "ocamlc", "-o", chemin_de_la_sortie, chemin_de_la_traduction, NUL);
 		} sinon {
 			fprintf(stderr, "Langage %s non supporté à la compilation\n", langage_d_entree);
 			succes_de_la_compilation = 1;
@@ -172,7 +189,7 @@ entier ccdille_utilisation() {
 	retourner 1;
 }
 
-entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération ccdille_sens sens) {
+entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, structure mot_cle_francais *mot_cles, taille_t mot_cles_taille, énumération ccdille_sens sens) {
 	caractère tampon[TAILLE_DU_TAMPON];
 	entier c;
 	entier succes_de_la_traduction;
@@ -184,7 +201,7 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération 
 		c = fgetc(entree);
 
 		si (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '(' || c == ')' || c == '/' || c == '*' || c == ';' || c == '|' || c == '&' || c == '*' || c == '!' || c == '=' || c == ':' || c == EOF) {
-			succes_de_la_traduction = ccdille_traduire_mot((caractère*)tampon, &longueur, sens);
+			succes_de_la_traduction = ccdille_traduire_mot(mot_cles, mot_cles_taille, (caractère*)tampon, &longueur, sens);
 			si (succes_de_la_traduction || c == EOF) {
 				ecrit = fwrite((vide*)tampon, taille de(caractère), longueur, sortie);
 				si (ecrit < longueur) {
@@ -214,14 +231,14 @@ entier ccdille_traduire_fichier(FICHIER* entree, FICHIER* sortie, énumération 
 	retourner 0;
 }
 
-entier ccdille_traduire_mot(caractère* mot_a_traduire, taille_t* longueur, énumération ccdille_sens sens) {
+entier ccdille_traduire_mot(structure mot_cle_francais *mot_cles, taille_t mot_cles_taille, caractère* mot_a_traduire, taille_t* longueur, énumération ccdille_sens sens) {
 	taille_t i;
 	énumération ccdille_comparaison_de_chaine_de_caractere_resultat resultat;
 	structure mot_cle_francais mot_cle;
 	caractère *mot, *traduction;
 
-	pour (i = 0; i < taille de(mot_cles_c)/taille de(*mot_cles_c); i++) {
-		mot_cle = mot_cles_c[i];
+	pour (i = 0; i < mot_cles_taille; i++) {
+		mot_cle = mot_cles[i];
 		si (sens == CCDILLE_A_L_ENDROIT) {
 			mot = mot_cle.mot;
 			traduction = mot_cle.traduction;

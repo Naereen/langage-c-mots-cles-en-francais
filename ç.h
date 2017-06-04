@@ -29,13 +29,15 @@ struct mot_cle_francais {
 };
 
 int ccdille_utilisation();
-int ccdille_traduire_fichier(FILE* entree, FILE* sortie, enum ccdille_sens sens);
-int ccdille_traduire_mot(char* mot_a_traduire, size_t* longueur, enum ccdille_sens sens);
+int ccdille_traduire_fichier(FILE* entree, FILE* sortie, struct mot_cle_francais *mot_cles, size_t mot_cles_taille, enum ccdille_sens sens);
+int ccdille_traduire_mot(struct mot_cle_francais *mot_cles, size_t mot_cles_taille, char* mot_a_traduire, size_t* longueur, enum ccdille_sens sens);
 size_t ccdille_minimum(size_t a, size_t b);
 int ccdille_dernier_index_de(char* mot, char c);
 enum ccdille_comparaison_de_chaine_de_caractere_resultat ccdille_comparaison_de_chaine_de_caractere(char const *a, size_t longueur_de_a, char const *b, size_t longueur_de_b);
 
 /* Langage C */
+#define DEBUT_COMMENTAIRE_C "/* "
+#define FIN_COMMENTAIRE_C " */"
 struct mot_cle_francais mot_cles_c[] = {
   /* Directives préprocesseur */
   {"#définir", "#define"},
@@ -178,6 +180,69 @@ struct mot_cle_francais mot_cles_c[] = {
   {"<temps des nœuds d'index.en-tête>", "<utime.h>"},
   {"<utmpx.en-tête>", "<utmpx.h>"}, /* TODO */
   {"<expansion de mots.en-tête>", "<wordexp.h>"}
+};
+
+/* Langage OCaml */
+#define DEBUT_COMMENTAIRE_ML "(* "
+#define FIN_COMMENTAIRE_ML " *)"
+struct mot_cle_francais mot_cles_ml[] = {
+  /* Mot-clefs */
+  {"et", "and"},
+  {"en tant que", "as"},
+  {"s'assurer que", "assert"},
+  {"décalage arithmétique vers la droite", "asr"},
+  {"début", "begin"},
+  {"classe", "class"},
+  {"une contrainte", "constraint"},
+  {"fini", "done"},
+  {"descendant jusqu'à", "downto"},
+  {"sinon", "else"},
+  {"fin", "end"},
+  {"exception", "exception"},
+  {"externe", "external"},
+  {"faux", "false"},
+  {"pour", "for"},
+  {"fon", "fun"},
+  {"fonction", "function"},
+  {"foncteur", "functor"},
+  {"si", "if"},
+  {"dans", "in"},
+  {"inclure", "include"},
+  {"hérite de", "inherit"},
+  {"initialisateur", "initializer"},
+  {"et logique", "land"},
+  {"paresseux", "lazy"},
+  {"soit", "let"},
+  {"ou logique", "lor"},
+  {"décalage logique vers la gauche", "lsl"},
+  {"décalage logique vers la droite", "lsr"},
+  {"ou logique exclusif bit-à-bit", "lxor"},
+  {"faire correspondre", "match"},
+  {"méthode", "method"},
+  {"modulo", "mod"},
+  {"module", "module"},
+  {"muable", "mutable"},
+  {"nouveau", "new"},
+  {"non récursive", "nonrec"},
+  {"objet", "object"},
+  {"de", "of"},
+  {"ouvrir", "open"},
+  {"ou", "or"},
+  {"privée", "private"},
+  {"récursive", "rec"},
+  {"signature", "sig"},
+  {"structure", "struct"},
+  {"alors", "then"},
+  {"jusqu'à", "to"},
+  {"vrai", "true"},
+  {"essayer", "try"},
+  {"type", "type"},
+  {"valeur", "val"},
+  {"virtuel", "virtual"},
+  {"lorsque", "when"},
+  {"tant que", "while"},
+  {"à", "with"},
+  {"faire", "do"},
 };
 
 #endif
