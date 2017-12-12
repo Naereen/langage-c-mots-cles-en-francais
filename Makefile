@@ -1,7 +1,7 @@
 CC ?= cc
+PREFIX ?= /usr/local
 CFLAGS = -std=c99 -ansi -O2
 DBGFLAGS = -std=c99 -W -Wall -Werror -Wextra -Wno-unused-parameter -pedantic -pedantic-errors -g -ansi
-PREFIX = /usr/local
 
 ç: ç.c ç.h
 	$(CC) $(CFLAGS) -o ç ç.c
