@@ -313,4 +313,68 @@ structure mot_cle_francais mot_cles_ml[] = {
   {"faire", "do"},
 };
 
+/* Langage RuSt */
+#définir DEBUT_COMMENTAIRE_RS "/* "
+#définir FIN_COMMENTAIRE_RS " */"
+structure mot_cle_francais mot_cles_rs[] = {
+  /* Mots clef */
+  {"soit", "let"},
+  {"déconstruire", "match"},
+  {"caisson étranger", "extern crate"},
+  {"fn", "fn"},
+  {"var", "mut"},
+  {"utiliser", "use"},
+  {"ref", "ref"},
+  {"pub", "pub"},
+  {"mod", "mod"},
+  {"énum", "enum"},
+  {"struct", "struct"},
+  {"soit", "self"},
+  {"faux", "false"},
+  {"vrai", "true"},
+  {"où", "where"},
+  {"pas sûr", "unsafe"},
+  {"si", "if"},
+  {"sinon", "else"},
+  {"statique", "static"},
+  {"const", "const"},
+  {"pour", "for"},
+  {"tant que", "while"},
+  {"boucler", "loop"},
+
+  /* Types primitifs */
+  {"e8", "i8"},
+  {"e16", "i16"},
+  {"e32", "i32"},
+  {"e64", "i64"},
+  {"e128", "i128"},
+  {"etaille", "isize"},
+  {"n8", "u8"},
+  {"n16", "u16"},
+  {"n32", "u32"},
+  {"n64", "u64"},
+  {"n128", "u128"},
+  {"ntaille", "usize"},
+  {"car", "char"},
+  {"bool", "bool"},
+  {"chaine", "str"},
+
+  /* Directives processeur */
+  {"#[dériver de", "#[derive"},
+
+  /* Types autoimportés la stdlib */
+  {"Option", "Option"},
+  {"Quelque", "Some"},
+  {"Aucun", "None"},
+  {"Résultat", "Result"},
+  {"Passable", "Ok"},
+  {"Mauvais", "Err"},
+  {"Boîte", "Box"},
+  {"Vec", "Vec"},
+  {"En tant que référence", "AsRef"},
+  {"Chaîne", "String"},
+
+  {"principale", "main"}
+};
+
 #fin si

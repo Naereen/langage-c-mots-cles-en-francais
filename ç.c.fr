@@ -99,6 +99,8 @@ entier principale(entier argc, caractère* argv[]) {
 					langage_d_entree = "c";
 				} sinon si (strcmp(extension, "ml") == 0 || strcmp(extension, "mli") == 0) {
 					langage_d_entree = "ml";
+				} sinon si (strcmp(extension, "rs") == 0) {
+					langage_d_entree = "rs";
 				} sinon {
 					fprintf(stderr, "Extension %s non supportée\n", extension);
 					retourner 1;
@@ -123,6 +125,11 @@ entier principale(entier argc, caractère* argv[]) {
 			mot_cles_taille = taille de(mot_cles_ml)/taille de(*mot_cles_ml);
 			debut_commentaire = (caractère*) DEBUT_COMMENTAIRE_ML;
 			fin_commentaire = (caractère*) FIN_COMMENTAIRE_ML;
+		} sinon si (strcmp(langage_d_entree, "rs") == 0) {
+			mot_cles = mot_cles_rs;
+			mot_cles_taille = taille de(mot_cles_rs)/taille de(*mot_cles_rs);
+			debut_commentaire = (caractère*) DEBUT_COMMENTAIRE_RS;
+			fin_commentaire = (caractère*) FIN_COMMENTAIRE_RS;
 		} sinon {
 			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
 			retourner 1;
