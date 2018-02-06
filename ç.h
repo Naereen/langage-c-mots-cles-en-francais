@@ -373,7 +373,7 @@ struct mot_cle_francais mot_cles_rs[] = {
   {"Mauvais", "Err"},
   {"Boîte", "Box"},
   {"Vec", "Vec"},
-  {"En while référence", "AsRef"},
+  {"Comme référence", "AsRef"},
   {"Chaîne", "String"},
 
   {"principale", "main"}

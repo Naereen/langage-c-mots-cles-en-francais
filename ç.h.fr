@@ -371,7 +371,7 @@ structure mot_cle_francais mot_cles_rs[] = {
   {"Mauvais", "Err"},
   {"Boîte", "Box"},
   {"Vec", "Vec"},
-  {"En tant que référence", "AsRef"},
+  {"Comme référence", "AsRef"},
   {"Chaîne", "String"},
 
   {"principale", "main"}
