@@ -101,6 +101,8 @@ int main(int argc, char* argv[]) {
 					langage_d_entree = "c";
 				} else if (strcmp(extension, "ml") == 0 || strcmp(extension, "mli") == 0) {
 					langage_d_entree = "ml";
+				} else if (strcmp(extension, "rs") == 0) {
+					langage_d_entree = "rs";
 				} else {
 					fprintf(stderr, "Extension %s non supportée\n", extension);
 					return 1;
@@ -125,6 +127,11 @@ int main(int argc, char* argv[]) {
 			mot_cles_taille = sizeof(mot_cles_ml)/sizeof(*mot_cles_ml);
 			debut_commentaire = (char*) DEBUT_COMMENTAIRE_ML;
 			fin_commentaire = (char*) FIN_COMMENTAIRE_ML;
+		} else if (strcmp(langage_d_entree, "rs") == 0) {
+			mot_cles = mot_cles_rs;
+			mot_cles_taille = sizeof(mot_cles_rs)/sizeof(*mot_cles_rs);
+			debut_commentaire = (char*) DEBUT_COMMENTAIRE_RS;
+			fin_commentaire = (char*) FIN_COMMENTAIRE_RS;
 		} else {
 			fprintf(stderr, "Langage %s non supporté\n", langage_d_entree);
 			return 1;
