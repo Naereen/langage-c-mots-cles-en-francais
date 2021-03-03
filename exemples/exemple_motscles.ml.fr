@@ -1,0 +1,42 @@
+(**
+ * Un petit programme écrit en OCaml (https://OCaml.org), rédigé avec des mots-clés en anglais,
+ * Il fait beaucoup de choses de base que permet OCaml et exécute des tests dessus.
+ *
+ * Voir <https://github.com/Naereen/ocaml-mots-cles-en-francais/>
+ *
+ * Copyright Lilian Besson, 2021, publié sous la licence MIT
+ * Voir <https://lbesson.mit-license.org/>
+*)
+
+(* Ces changements sont faciles à faire avec un Stdlib_french.ml, si on voulait, ou un ~/.ocamlinit *)
+soit echoueavec = failwith;;
+soit ( non ) = ( not );;
+
+soit afficher = Format.printf;;
+
+afficher "Testons presque tous les autres mots-clés Français...\n%!";;
+
+soit x:int =
+  essayer
+    début
+      2021/0
+    fin
+  à _ -> 42;;
+s'assurer que (x = 42);;
+
+soit y = 40
+et   z = 2
+dans début
+  soit answertolife = y + z dans
+  s'assurer que (answertolife = 42)
+fin;;
+
+s'assurer que vrai;;
+s'assurer que (non (faux));;
+s'assurer que (vrai || faux);;
+s'assurer que (vrai && (non (faux)));;
+
+ouvrir List;;
+s'assurer que ((length [1;2;3]) = 3);;
+
+afficher "Fait pour les tests en Français !\n%!";;
